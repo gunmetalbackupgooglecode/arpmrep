@@ -9,5 +9,6 @@
 
 
 void time_sub(struct timeval* time1_out, struct timeval* time2);
+unsigned short calc_checksum(unsigned short* buf_ptr, int buf_len);
 
 #endif /* UTILS_H_ */

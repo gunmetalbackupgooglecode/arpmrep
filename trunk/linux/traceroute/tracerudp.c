@@ -10,7 +10,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-
 #include "utils.h"
 
 #define BUF_SIZE 1500
@@ -27,9 +26,6 @@ struct outdata
 };
 const int DATA_LEN = sizeof(struct outdata);
 
-char recv_buf[BUF_SIZE];
-char send_buf[BUF_SIZE];
-
 int socket_udp_send_d;
 int socket_icmp_recv_d;
 struct sockaddr_in send_sockaddr;
@@ -45,7 +41,7 @@ enum get_packet_result
   TIME_OUT_RESULT
 };
 
-enum get_packet_result get_packet(int port, struct timeval*);
+static enum get_packet_result get_packet(int port, struct timeval* recv_time_ptr);
 
 void main_udp(struct hostent* host_ptr)
 {
@@ -84,10 +80,16 @@ void main_udp(struct hostent* host_ptr)
     perror("bind() failed");
   }
 
+  char send_buf[BUF_SIZE];
   struct sockaddr_in last_probe_addr; // print all different hosts for a single probe
+  struct timeval recv_time;
+  enum get_packet_result gp_result;
+  struct hostent* cur_host;
   int is_done = 0;
   int seq = 0;
   int ttl;
+  int probe;
+  int dest_port;
 
   for (ttl = 1; ttl <= MAX_TTL && 0 == is_done; ++ ttl)
   {
@@ -96,8 +98,6 @@ void main_udp(struct hostent* host_ptr)
 
     printf("%2d  ", ttl);
     fflush(stdout);
-
-    int probe;
 
     // lets send MAX_PROBE packets to different ports
     // it's useful if current port is in use
@@ -108,7 +108,7 @@ void main_udp(struct hostent* host_ptr)
       outdata->ttl = ttl;
       gettimeofday(&outdata->send_time, NULL);
 
-      int dest_port = INITIAL_DEST_PORT + seq;
+      dest_port = INITIAL_DEST_PORT + seq;
 
       send_sockaddr.sin_port = htons(dest_port);
 
@@ -120,9 +120,7 @@ void main_udp(struct hostent* host_ptr)
         exit(-1);
       }
 
-      struct timeval recv_time;
-      enum get_packet_result gp_result = get_packet(dest_port, &recv_time);
-
+      gp_result = get_packet(dest_port, &recv_time);
       if (TIME_OUT_RESULT == gp_result)      {
         // not successful probe
         printf(" *");
@@ -134,9 +132,9 @@ void main_udp(struct hostent* host_ptr)
         if (func_res != 0)
         {
           // try to resolve host name
-          struct hostent* cur_host = gethostbyaddr(&recv_sockaddr.sin_addr,
-                                                   sizeof(recv_sockaddr.sin_addr),
-                                                   recv_sockaddr.sin_family);
+          cur_host = gethostbyaddr(&recv_sockaddr.sin_addr,
+                                   sizeof(recv_sockaddr.sin_addr),
+                                   recv_sockaddr.sin_family);
           if (cur_host != NULL)
           {
             printf(" %s (%s)", inet_ntoa(recv_sockaddr.sin_addr), cur_host->h_name);
@@ -168,7 +166,14 @@ enum get_packet_result get_packet(int dest_port, struct timeval* recv_time_ptr)
 {
   unsigned int sockaddr_len = sizeof(recv_sockaddr);
   fd_set fds;
+  char recv_buf[BUF_SIZE];
   struct timeval wait_time;
+  struct ip* outer_ip_ptr;
+  int outer_ip_len;
+  struct icmp* icmp_ptr;
+  struct ip* inner_ip_ptr;
+  int inner_ip_len;
+  struct udphdr* udp_ptr;
 
   // we will wait 4 seconds for response, else time out
   wait_time.tv_sec = 4;
@@ -198,12 +203,12 @@ enum get_packet_result get_packet(int dest_port, struct timeval* recv_time_ptr)
 
     gettimeofday(recv_time_ptr, NULL);
 
-    struct ip* outer_ip_ptr = (struct ip*)recv_buf; // outer IP header
-    int outer_ip_len = outer_ip_ptr->ip_hl << 2;
-    struct icmp* icmp_ptr = (struct icmp*)(recv_buf + outer_ip_len); // ICMP header
-    struct ip* inner_ip_ptr = (struct ip*)(recv_buf + outer_ip_len + 8); // saved IP header
-    int inner_ip_len = inner_ip_ptr->ip_hl << 2;
-    struct udphdr* udp_ptr = (struct udphdr*)(recv_buf + outer_ip_len + 8 + inner_ip_len); // UDP header
+    outer_ip_ptr = (struct ip*)recv_buf; // outer IP header
+    outer_ip_len = outer_ip_ptr->ip_hl << 2;
+    icmp_ptr = (struct icmp*)(recv_buf + outer_ip_len); // ICMP header
+    inner_ip_ptr = (struct ip*)(recv_buf + outer_ip_len + 8); // saved IP header
+    inner_ip_len = inner_ip_ptr->ip_hl << 2;
+    udp_ptr = (struct udphdr*)(recv_buf + outer_ip_len + 8 + inner_ip_len); // UDP header
 
     if (inner_ip_ptr->ip_p != IPPROTO_UDP ||
         udp_ptr->source != htons(src_port) ||
