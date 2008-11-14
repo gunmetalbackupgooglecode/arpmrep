@@ -1,229 +1,193 @@
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <netinet/ip.h>
-//#include <netinet/ip_icmp.h>
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <netdb.h>
-//#include <sys/time.h>
-//#include <unistd.h>
-//
-//#define BUF_SIZE 1500
-//
-//int sd;// /* дескриптор сокета */
-//pid_t pid;// /* идентификатор нашего процесса PID */
-//struct sockaddr_in send_sockaddr;// /* структура sockaddr() для отправки пакета */
-//struct sockaddr_in recv_sockaddr;// /* структура sockaddr() для получения пакета */
-//struct sockaddr_in salast;///* последняя структура sockaddr() для получения */
-//
-//int ttl;
-//int probe;
-//int MAX_TTL = 30;// /* максимальное значение поля TTL */
-//int nprobes = 3;// /* количество пробных пакетов */
-//
-///* прототипы функций */
-//int output(int, struct timeval *);
-//void time_sub(struct timeval *, struct timeval *);
-//unsigned short in_cksum(unsigned short *, int);
-//
-///*------------------------*/
-///* Главная функция main() */
-///*------------------------*/
-//int main(int argc, char *argv[])
-//{
-//  int seq;
-//  int code;
-//  int done;
-//  double rtt;
-//  struct timeval *tvsend;
-//  struct timeval tvrecv;
-//  struct hostent *hp;
-//  int icmplen;
-//  struct icmp *icmp;
-//  char sendbuf[BUF_SIZE];
-//
-//  if (argc != 2) {
-//    fprintf(stderr, "Usage: %s <hostname>\n", argv[0]);
-//    exit(-1);
-//  }
-//
-//  pid = getpid();
-//
-//  if ( (hp = gethostbyname(argv[1])) == NULL) {
-//    herror("gethostbyname() failed");
-//    exit(-1);
-//  }
-//
-//  if ( (sd = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0) {
-//    perror ("socket() failed");
-//    exit(-1);
-//  }
-//
-//  setuid(getuid());
-//
-//  bzero(&send_sockaddr, sizeof(send_sockaddr));
-//  send_sockaddr.sin_family = AF_INET;
-//  send_sockaddr.sin_addr= *((struct in_addr *) hp->h_addr);
-////
-//  seq = 0;
-//  done = 0;
-//  for (ttl = 1; ttl <= MAX_TTL && done == 0; ttl++) {
-//    setsockopt(sd, SOL_IP, IP_TTL, &ttl, sizeof(int));
-//    bzero(&salast, sizeof(salast));
-//
-//    printf("%2d  ", ttl);
-//    fflush(stdout);
-//
-//    for (probe = 0; probe < nprobes; probe++) {
-//
-//      icmp = (struct icmp *) sendbuf;
-//
-//      /* заполняем все поля ICMP-сообщения */
-//      icmp->icmp_type = ICMP_ECHO;
-//      icmp->icmp_code = 0;
-//      icmp->icmp_id = pid;
-//      icmp->icmp_seq = ++seq;
-//      tvsend = (struct timeval *) icmp->icmp_data;
-//      gettimeofday(tvsend, NULL);
-//
-//      /* длина ICMP-заголовка составляет 8 байт и 56 байт данных */
-//      icmplen = 8 + 56;
-//      /* контрольная сумма ICMP-заголовка и данных */
-//      icmp->icmp_cksum = 0;
-//      icmp->icmp_cksum = in_cksum((unsigned short *) icmp, icmplen);
-//
-//      if (sendto(sd, sendbuf, icmplen, 0, (struct sockaddr *)&send_sockaddr, sizeof(send_sockaddr)) < 0) {
-//        perror("sendto() failed");
-//        exit(-1);
-//      }
-//
-//      if ( (code = output(seq, &tvrecv)) == -3)
-//        printf(" *");
-//      else {
-//        if (memcmp(&recv_sockaddr.sin_addr, &salast.sin_addr, sizeof(recv_sockaddr.sin_addr)) != 0) {
-//          if ( (hp = gethostbyaddr(&recv_sockaddr.sin_addr, sizeof(recv_sockaddr.sin_addr), recv_sockaddr.sin_family)) != 0)
-//            printf(" %s (%s)", inet_ntoa(recv_sockaddr.sin_addr), hp->h_name);
-//          else
-//            printf(" %s", inet_ntoa(recv_sockaddr.sin_addr));
-//          memcpy(&salast.sin_addr, &recv_sockaddr.sin_addr, sizeof(salast.sin_addr));
-//        }
-//
-//        time_sub(&tvrecv, tvsend);
-//        rtt = tvrecv.tv_sec * 1000.0 + tvrecv.tv_usec / 1000.0;
-//        printf("  %.3f ms", rtt);
-//
-//        if (code == -1)
-//          ++done;
-//      }
-//
-//      fflush(stdout);
-//    }
-//
-//    printf("\n");
-//  }
-//
-//  return 0;
-//}
-//
-///*---------------------------------------------------------------*/
-///* Разбор принятого пакета                                       */
-///*                                                               */
-///* Возвращает:                                                   */
-///* -3 в случае истечения времени ожидания;                       */
-///* -2 в случае получения сообщения ICMP time exceeded in transit */
-///*    (программа продолжает работать);                           */
-///* -1 в случае получения сообщения ICMP Echo Reply               */
-///*    (программа завершается).                                   */
-///*---------------------------------------------------------------*/
-//int output(int seq, struct timeval *tv)
-//{//
-//  int n;
-//  int len;
-//  int hlen1;
-//  int hlen2;
-//  struct ip *ip;
-//  struct ip *hip;
-//  struct icmp *icmp;
-//  struct icmp *hicmp;
-//  double rtt;
-//  char recvbuf[BUF_SIZE];
-//  fd_set fds;
-//  struct timeval wait;
-//
-//  wait.tv_sec = 4;// /* ждать ответа не более 4-х секунд */
-//  wait.tv_usec = 0;
-//
-//  for (;;) {
-//    len = sizeof(recv_sockaddr);
-//
-//    FD_ZERO(&fds);
-//    FD_SET(sd, &fds);
-//
-//    if (select(sd+1, &fds, NULL, NULL, &wait) > 0)
-//      n = recvfrom(sd, recvbuf, sizeof(recvbuf), 0, (struct sockaddr*)&recv_sockaddr, &len);
-////    else if (!FD_ISSET(sd, &fds))
-//      return (-3);
-//    else
-//      perror("recvfrom() failed");
-//
-//    gettimeofday(tv, NULL);
-//
-//    ip = (struct ip *) recvbuf;	/* начало IP-заголовка */
-//    hlen1 = ip->ip_hl << 2;     /* длина IP-заголовка */
-//
-//    icmp = (struct icmp *) (recvbuf + hlen1); /* начало ICMP-заголовка */
-//
-////if (icmp->icmp_type == ICMP_TIMXCEED &&
-//        icmp->icmp_code == ICMP_TIMXCEED_INTRANS) {
-//      hip = (struct ip *)(recvbuf + hlen1 + 8);
-//      hlen2 = hip->ip_hl << 2;
-//      hicmp = (struct icmp *) (recvbuf + hlen1 + 8 + hlen2);
-//      if (hicmp->icmp_id == pid && hicmp->icmp_seq == seq)//
-//        return (-2);
-//    }
-//
-//    if (icmp->icmp_type == ICMP_ECHOREPLY &&
-//        icmp->icmp_id == pid &&
-//        icmp->icmp_seq == seq)
-//      return (-1);
-//  }
-//
-//}
-//////
-///*---------------------------------*/
-///* Вычитание двух timeval структур */
-/////*---------------------------------*///
-//void time_sub(struct timeval *out, struct timeval *in)
-//{
-//  if ( (out->tv_usec -= in->tv_usec) < 0) {
-//    out->tv_sec--;
-//    out->tv_usec += 1000000;
-//  }
-//  out->tv_sec -= in->tv_sec;
-//}
-//
-///*------------------------------*/
-///* Вычисление контрольной суммы */
-/////*------------------------------*/
-//unsigned short in_cksum(unsigned short *addr, int len)
-//{
-//  unsigned short result;
-//  unsigned int sum = 0;
-//
-//  /* складываем все двухбайтовые слова */
-//  while (len > 1) {
-//    sum += *addr++;
-//    len -= 2;
-//  }
-//
-//  /* если остался лишний байт, прибавляем его к сумме */
-//  if (len == 1)
-//    sum += *(unsigned char*) addr;
-//
-//  sum = (sum >> 16) + (sum & 0xFFFF);// /* добавялем перенос */
-//  sum += (sum >> 16);//                 /* еще раз */
-//  result = ~sum;//                      /* инвертируем результат */
-//  return result;
-//}
-//
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include "utils.h"
+
+
+#define BUF_SIZE 1500
+#define MAX_TTL 30
+#define MAX_PROBE 3
+
+
+pid_t pid;
+int socket_d;
+struct sockaddr_in recv_sockaddr;
+
+enum output_result
+{
+  ERROR_RESULT,
+  ICMP_ECHO_REPLY,
+  ICMP_TIME_EXCEEDED_RESULT,
+  TIME_OUT_RESULT
+};
+
+static enum output_result output(int seq, struct timeval* recv_time_ptr);
+
+
+int main_icmp(struct hostent* host_ptr)
+{
+  pid = getpid();
+
+  socket_d = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP);
+  if (socket_d < 0)
+  {
+    perror ("socket() failed");
+    exit(-1);
+  }
+
+  setuid(getuid());
+
+  struct sockaddr_in send_sockaddr;
+
+  bzero(&send_sockaddr, sizeof(send_sockaddr));
+  send_sockaddr.sin_family = AF_INET;
+  send_sockaddr.sin_addr= *((struct in_addr *) host_ptr->h_addr);
+
+  struct sockaddr_in last_probe_sockaddr;
+  char send_buf[BUF_SIZE];
+  struct icmp* icmp_ptr;
+  int icmp_len;
+  struct timeval* send_time_ptr;
+  struct timeval recv_time;
+  double round_time_trip;
+  int code;
+  int ttl;
+  int probe;
+  int seq = 0;
+  int is_done = 0;
+
+  for (ttl = 1; ttl <= MAX_TTL && !is_done; ++ ttl)
+  {
+    setsockopt(socket_d, SOL_IP, IP_TTL, &ttl, sizeof(int)); // set new TTL value
+    bzero(&last_probe_sockaddr, sizeof(last_probe_sockaddr)); // clear last address
+
+    printf("%2d  ", ttl);
+    fflush(stdout);
+
+    for (probe = 0; probe < MAX_PROBE; ++ probe)
+    {
+      // fill ICMP packet
+      icmp_ptr = (struct icmp*)send_buf;
+      icmp_ptr->icmp_type = ICMP_ECHO;
+      icmp_ptr->icmp_code = 0;
+      icmp_ptr->icmp_id = pid;
+      icmp_ptr->icmp_seq = ++ seq;
+      send_time_ptr = (struct timeval*)icmp_ptr->icmp_data;
+      gettimeofday(send_time_ptr, NULL);
+
+      icmp_len = 8 + 56;
+      icmp_ptr->icmp_cksum = 0;
+      icmp_ptr->icmp_cksum = calc_checksum((unsigned short*)icmp_ptr, icmp_len);
+
+      if (sendto(socket_d, send_buf, icmp_len, 0, (struct sockaddr*)&send_sockaddr, sizeof(send_sockaddr)) < 0)
+      {
+        perror("sendto() failed");
+        exit(-1);
+      }
+
+      code = output(seq, &recv_time);
+      if (TIME_OUT_RESULT == code)
+      {
+        printf(" *");
+      }
+      else
+      {
+        if (memcmp(&recv_sockaddr.sin_addr, &last_probe_sockaddr.sin_addr, sizeof(recv_sockaddr.sin_addr)) != 0)
+        {
+          host_ptr = gethostbyaddr(&recv_sockaddr.sin_addr, sizeof(recv_sockaddr.sin_addr), recv_sockaddr.sin_family);
+          if (host_ptr  != 0)
+          {
+            printf(" %s (%s)", inet_ntoa(recv_sockaddr.sin_addr), host_ptr->h_name);
+          }
+          else
+          {
+            printf(" %s", inet_ntoa(recv_sockaddr.sin_addr));
+          }
+          memcpy(&last_probe_sockaddr.sin_addr, &recv_sockaddr.sin_addr, sizeof(last_probe_sockaddr.sin_addr));
+        }
+
+        time_sub(&recv_time, send_time_ptr);
+        round_time_trip = recv_time.tv_sec * 1000.0 + recv_time.tv_usec / 1000.0;
+        printf("  %.3f ms", round_time_trip);
+
+        is_done = (ICMP_ECHO_REPLY == code);
+      }
+
+      fflush(stdout);
+    }
+
+    printf("\n");
+  }
+
+  return 0;
+}
+
+
+enum output_result output(int seq, struct timeval* recv_time_ptr)
+{  int n;
+  unsigned int sockaddr_len;
+  char recv_buf[BUF_SIZE];
+  fd_set fds;
+  struct ip* ip_ptr;
+  int ip_len;
+  struct icmp* icmp_header;
+  struct ip* inner_ip_ptr;
+  int inner_ip_len;
+  struct icmp* inner_icmp_ptr;
+
+  struct timeval wait_time;
+
+  wait_time.tv_sec = 4;  wait_time.tv_usec = 0;
+
+  while (1)
+  {
+    sockaddr_len = sizeof(recv_sockaddr);
+
+    FD_ZERO(&fds);
+    FD_SET(socket_d, &fds);
+
+    if (select(socket_d+1, &fds, NULL, NULL, &wait_time) > 0)
+    {
+      n = recvfrom(socket_d, recv_buf, sizeof(recv_buf), 0, (struct sockaddr*)&recv_sockaddr, &sockaddr_len);
+    }    else if (!FD_ISSET(socket_d, &fds))
+    {
+      return TIME_OUT_RESULT;
+    }
+    else
+    {
+      perror("recvfrom() failed");
+      continue;
+    }
+
+    gettimeofday(recv_time_ptr, NULL);
+
+    ip_ptr = (struct ip*)recv_buf;	// IP header
+    ip_len = ip_ptr->ip_hl << 2;
+    icmp_header = (struct icmp*) (recv_buf + ip_len); // ICMP header
+    if (ICMP_TIMXCEED == icmp_header->icmp_type &&
+        ICMP_TIMXCEED_INTRANS == icmp_header->icmp_code)
+    {
+      inner_ip_ptr = (struct ip*)(recv_buf + ip_len + 8);
+      inner_ip_len = inner_ip_ptr->ip_hl << 2;
+      inner_icmp_ptr = (struct icmp*) (recv_buf + ip_len + 8 + inner_ip_len);
+      if (inner_icmp_ptr->icmp_id == pid &&
+          inner_icmp_ptr->icmp_seq == seq)
+        return ICMP_TIME_EXCEEDED_RESULT;
+    }
+
+    if (ICMP_ECHOREPLY == icmp_header->icmp_type &&
+        icmp_header->icmp_id == pid &&
+        icmp_header->icmp_seq == seq)
+    {
+      return ICMP_ECHO_REPLY;
+    }
+  }
+}

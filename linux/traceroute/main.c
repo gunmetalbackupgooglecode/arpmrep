@@ -4,6 +4,7 @@
 
 
 void main_udp(struct hostent* host_ptr);
+void main_icmp(struct hostent* host_ptr);
 
 
 int main(int argc, char** argv)
@@ -22,7 +23,8 @@ int main(int argc, char** argv)
     exit(-1);
   }
 
-  main_udp(host_ptr);
+//  main_udp(host_ptr);
+  main_icmp(host_ptr);
 
   return 0;
 }
