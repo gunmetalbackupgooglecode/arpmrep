@@ -10,11 +10,12 @@
 class PE
 {
 public:
-	PE(DWORD fileMapAddress, BOOL dontParse = FALSE);
+	PE(DWORD fileMapAddress);
 	~PE();
 	
 	const CHAR* GetLastError() const;
 	BOOL Parse();
+	BOOL SetDefaultValues();
 
 private:
 	DWORD RvaToFileOffset(DWORD);
@@ -29,7 +30,7 @@ private:
   DWORD fileMapAddress;
   CHAR* lastError;
 
-//	IMAGE_DOS_HEADER* imageDosHeader;
+  IMAGE_DOS_HEADER* imageDosHeader;
 //	IMAGE_FILE_HEADER* imageFileHeader;
 //	IMAGE_OPTIONAL_HEADER* imageOptionalHeader;
 //	IMAGE_SECTION_HEADER* imageSectionHeader; // array of imageFileHeader->NumberOfSections elements

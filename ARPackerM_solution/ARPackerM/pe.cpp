@@ -1,7 +1,7 @@
 #include "pe.h"
 
 
-PE::PE(DWORD _fileMapAddress, BOOL dontParse /* = FALSE */) :
+PE::PE(DWORD _fileMapAddress) :
   fileMapAddress(_fileMapAddress)
 {
   lastError = new CHAR[LAST_ERROR_SIZE];
@@ -34,6 +34,38 @@ BOOL PE::Parse()
             LAST_ERROR_SIZE,
             "Not implemented");
   return FALSE;
+}
+
+
+BOOL PE::SetDefaultValues()
+{
+  imageDosHeader = (IMAGE_DOS_HEADER*)fileMapAddress;
+
+  imageDosHeader->e_magic = IMAGE_DOS_SIGNATURE; // "MZ"
+  imageDosHeader->e_cblp = 0x90; // ?
+  imageDosHeader->e_cp = 3; // ?
+  imageDosHeader->e_crlc = 0; // ?
+  imageDosHeader->e_cparhdr = 4; // ?
+  imageDosHeader->e_minalloc = 0; // ?
+  imageDosHeader->e_maxalloc = 0xFFFF; // ?
+  imageDosHeader->e_ss = 0; // ?
+  imageDosHeader->e_sp = 0xB8; // ?
+  imageDosHeader->e_csum = 0; // ?
+  imageDosHeader->e_ip = 0; // ?
+  imageDosHeader->e_cs = 0; // ?
+  imageDosHeader->e_lfarlc = 0x40; // ?
+  imageDosHeader->e_ovno = 0; // ?
+  ZeroMemory(imageDosHeader->e_res, 4); // ?
+  imageDosHeader->e_oemid = 0; // ?
+  imageDosHeader->e_oeminfo = 0; // ?
+  ZeroMemory(imageDosHeader->e_res2, 10); // ?
+  imageDosHeader->e_lfanew = 0xD0; // ?
+
+  //  imageFileHeader = (IMAGE_FILE_HEADER*)(fileMapAddress + imageDosHeader->e_lfanew + sizeof(IMAGE_NT_SIGNATURE));
+  //  imageOptionalHeader = (IMAGE_OPTIONAL_HEADER*)(fileMapAddress + imageDosHeader->e_lfanew + sizeof(IMAGE_NT_SIGNATURE) + sizeof(IMAGE_FILE_HEADER));
+  //  imageSectionHeader = (IMAGE_SECTION_HEADER*)(fileMapAddress + imageDosHeader->e_lfanew + sizeof(IMAGE_NT_SIGNATURE) + sizeof(IMAGE_FILE_HEADER) + sizeof(IMAGE_OPTIONAL_HEADER));
+
+  return TRUE;
 }
 
 
