@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ARPackerM"
-	ProjectGUID="{6F8117B2-8740-4081-8630-00010456B13E}"
-	RootNamespace="ARPackerM"
+	Name="PackedStub"
+	ProjectGUID="{872D092D-D661-4B91-970A-944A843F5B96}"
+	RootNamespace="PackedStub"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
