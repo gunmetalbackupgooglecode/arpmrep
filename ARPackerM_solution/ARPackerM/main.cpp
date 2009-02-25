@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <windows.h>
-#include "pe.h"
+#include "..\HackUtils\pe.h"
 
 
 int main(int argc, char** argv)
 {
 // open original file
-//  char* fileName = argv[2];
-  char* fileName = "c:\\Develop\\arpmrep\\ARPackerM_solution\\Debug\\test.exe";
-  HANDLE hFile; 
+  char* fileName = argv[1];
+//  char* fileName = "c:\\Develop\\arpmrep\\ARPackerM_solution\\Debug\\test.exe";
+  HANDLE hFile;
+  DWORD fileSize;
 
   hFile = CreateFile(fileName,
                      GENERIC_READ,
@@ -23,6 +24,7 @@ int main(int argc, char** argv)
            GetLastError());
     return 1;
   }
+  fileSize = GetFileSize(hFile, NULL);
 
   HANDLE hFileMap;
   
@@ -57,15 +59,15 @@ int main(int argc, char** argv)
   }
   
 // create packed file
-//  char* packedFileName = argv[3];
-  char* packedFileName = "c:\\Develop\\arpmrep\\ARPackerM_solution\\Debug\\test_packed.exe";
+  char* packedFileName = argv[2];
+//  char* packedFileName = "c:\\Develop\\arpmrep\\ARPackerM_solution\\Debug\\PackedStub_release.exe";
   HANDLE hPackedFile; 
 
   hPackedFile = CreateFile(packedFileName,
                            GENERIC_READ | GENERIC_WRITE, // need GENERIC_READ?
                            0,
                            NULL,
-                           CREATE_ALWAYS,
+                           OPEN_EXISTING, //CREATE_ALWAYS,
                            FILE_ATTRIBUTE_NORMAL,
                            NULL);
   if (INVALID_HANDLE_VALUE == hPackedFile)
@@ -75,6 +77,7 @@ int main(int argc, char** argv)
     return 1;
   }
   
+/*
   DWORD packedFileSize = 0x666;
   DWORD packedFilePtr;
   
@@ -95,6 +98,7 @@ int main(int argc, char** argv)
             GetLastError());
     return 1;
   }
+*/
 
   HANDLE hPackedFileMap;
   
@@ -129,10 +133,63 @@ int main(int argc, char** argv)
   }
   
   PE packedPE((DWORD)packedFileMapAddress);
-  
-// clean all
+
+//  packedPE.SetDefaultValues();
+  packedPE.Parse();
+
+  const IMAGE_SECTION_HEADER* packedSection = packedPE.AddSection(".arpm", fileSize);
+
+  if (NULL == packedSection)
+  {
+    printf("PE::AddSection failed: %s\n", packedPE.GetLastError());
+    UnmapViewOfFile(packedFileMapAddress);
+    CloseHandle(hPackedFileMap);
+    CloseHandle(hPackedFile);
+    return 1;
+  }
+
+  DWORD packedSectionStart = packedSection->PointerToRawData;
+
   UnmapViewOfFile(packedFileMapAddress);
   CloseHandle(hPackedFileMap);
+
+  DWORD packedFilePtr;
+
+  packedFilePtr = SetFilePointer( hPackedFile,
+                                  packedSectionStart,
+                                  NULL,
+                                  FILE_BEGIN);
+  if (INVALID_SET_FILE_POINTER == packedFilePtr)
+  { 
+    printf( "Could not set file pointer. Error = %d\n",
+            GetLastError());
+    return 1;
+  }
+
+  DWORD bytesWritten;
+  BOOL writeFileResult;
+
+  writeFileResult = WriteFile(hPackedFile, fileMapAddress, fileSize, &bytesWritten, NULL);
+
+  if (!writeFileResult)
+  { 
+    printf( "Could not write to file. Error = %d\n",
+            GetLastError());
+    return 1;
+  }
+
+  if (!SetEndOfFile(hPackedFile))
+  {
+    printf("Could not set end of file. Error = %d\n",
+      GetLastError());
+    return 1;
+  }
+
+//  CHAR* funcNames[1];
+//  funcNames[0] = "TerminateProcess";
+//  packedPE.AddImportDll("kernel32.dll", (const CHAR**)funcNames, 1);
+  
+// clean all
   CloseHandle(hPackedFile);
 
   UnmapViewOfFile(fileMapAddress);
