@@ -41,6 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				MinimalRebuild="true"
+				ExceptionHandling="2"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				WarningLevel="3"
@@ -157,6 +158,10 @@
 				RelativePath=".\pe.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\PEException.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -165,6 +170,10 @@
 			>
 			<File
 				RelativePath=".\pe.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PEException.h"
 				>
 			</File>
 		</Filter>
