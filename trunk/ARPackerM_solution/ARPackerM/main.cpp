@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include "..\HackUtils\pe.h"
+#include "..\HackUtils\PEException.h"
 
 
 int main(int argc, char** argv)
@@ -135,13 +136,28 @@ int main(int argc, char** argv)
   PE packedPE((DWORD)packedFileMapAddress);
 
 //  packedPE.SetDefaultValues();
-  packedPE.Parse();
-
-  const IMAGE_SECTION_HEADER* packedSection = packedPE.AddSection(".arpm", fileSize);
-
-  if (NULL == packedSection)
+  try
   {
-    printf("PE::AddSection failed: %s\n", packedPE.GetLastError());
+    packedPE.Parse();
+  }
+  catch (PEException& e)
+  {
+    _tprintf("Error while parsing file: %s\n", e.GetMessage());
+    UnmapViewOfFile(packedFileMapAddress);
+    CloseHandle(hPackedFileMap);
+    CloseHandle(hPackedFile);
+    return 1;
+  }
+
+  const IMAGE_SECTION_HEADER* packedSection;
+  
+  try
+  {
+    packedSection = packedPE.AddSection(".arpm", fileSize);
+  }
+  catch (PEException& e)
+  {
+    _tprintf("PE::AddSection failed: %s\n", e.GetMessage());
     UnmapViewOfFile(packedFileMapAddress);
     CloseHandle(hPackedFileMap);
     CloseHandle(hPackedFile);
