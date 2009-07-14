@@ -1,14 +1,28 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace PigSniffer
 {
   public partial class Form1 : Form
   {
-    private Thread snifferThread;
+    /// <summary>
+    /// true if PigSniffer is capturing packets right now
+    /// </summary>
+    private bool isOnline;
+    /// <summary>
+    /// working socket
+    /// </summary>
+    private Socket socket;
+    /// <summary>
+    /// array of received bytes
+    /// </summary>
+    private readonly byte[] socketData = new byte[4096]; // TODO: define constant
+    /// <summary>
+    /// current packet number
+    /// </summary>
+    private int packetNumber;
 
 
     public Form1()
@@ -17,60 +31,67 @@ namespace PigSniffer
     }
 
 
+    private delegate void AddPacketsListViewItemDelegate(ListViewItem item);
+    private void AddPacketsListViewItemCallback(ListViewItem item)
+    {
+      packetsListView.Items.Add(item);
+    }
+
+
     private void startButton_Click(object sender, EventArgs e)
     {
-      // obtain data
+      socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
+      socket.Bind(new IPEndPoint(IPAddress.Any, 0)); // TODO: obtain data
+      socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
 
-      // set promiscuous mode
+//      var byTrue = new byte[]{1, 0, 0, 0};
+//      var byOut = new byte[4];
 
-      snifferThread = new Thread(SnifferThread);
-      snifferThread.Start();
+//      socket.IOControl(IOControlCode.ReceiveAll, byTrue, byOut);
+
+      isOnline = true;
+      socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
+        new AsyncCallback(SocketCallback), null);
     }
 
     
     private void stopButton_Click(object sender, EventArgs e)
     {
-      snifferThread.Abort();
+      isOnline = false;
     }
 
     
-    private void SnifferThread()
+    private void SocketCallback(IAsyncResult ar)
     {
       try
       {
-        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-        byte[] byTrue = new byte[4]{1, 0, 0, 0};
-        byte[] byOut = new byte[4];
+        int count = socket.EndReceive(ar);
+        var ethernetHeader = new IPHeader(socketData, count);
 
-        socket.Bind(new IPEndPoint(IPAddress.Any, 0));
-        socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
-//        socket.IOControl(IOControlCode.ReceiveAll, byTrue, byOut);
-
-        byte[] data = new byte[255];
-        int count = 0;
-
-        while (true)
+        ++ packetNumber;
+        var item = new ListViewItem(new[] { packetNumber.ToString(),
+          ethernetHeader.GetSrcIPAddressString(), "",
+          ethernetHeader.GetDestIPAddressString(), "",
+          ethernetHeader.GetProtocolString()});
+        if (InvokeRequired)
         {
-          try
-          {
-            count = socket.Receive(data);
-            IPHeader ethernetHeader = new IPHeader(data, count);
-
-            ListViewItem item = new ListViewItem(new []{"a"});
-            packetsListView.Items.Add(item);
-            
-          }
-          catch (Exception ex)
-          {
-            MessageBox.Show("Error");
-          }
-          MessageBox.Show("Get " + count + "bytes");
+          var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);
+          Invoke(addDelegate, item);
+        }
+        else
+        {
+          AddPacketsListViewItemCallback(item);
         }
 
+        if (isOnline)
+        {
+          socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
+            new AsyncCallback(SocketCallback), null);
+        }
       }
-      catch (ThreadAbortException)
+      catch (SocketException ex)
       {
-        // unset promiscuous mode
+        MessageBox.Show("Error: " + ex);
       }
     }
 

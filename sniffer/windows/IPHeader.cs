@@ -48,9 +48,9 @@ namespace PigSniffer
 
     public IPHeader(byte[] data, int size)
     {
-      using (MemoryStream memoryStream = new MemoryStream(data, 0, size))
+      using (var memoryStream = new MemoryStream(data, 0, size))
       {
-        BinaryReader binaryReader = new BinaryReader(memoryStream);
+        var binaryReader = new BinaryReader(memoryStream);
 
         byte versionAndIHL = binaryReader.ReadByte();
         version = (byte)(versionAndIHL >> 4);
@@ -58,7 +58,7 @@ namespace PigSniffer
         differentiatedServices = binaryReader.ReadByte();
         totalLength = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         identification = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-        ushort flagsAndOffset = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+        var flagsAndOffset = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         flags = (byte)(flagsAndOffset >> 13);
         fragmentOffset = (byte)(flagsAndOffset & 0x1fff);
         TTL = binaryReader.ReadByte();
@@ -72,23 +72,38 @@ namespace PigSniffer
         Array.Copy(data, length, innerData, 0, totalLength - length);
       }
     }
-    //    public Protocol ProtocolType
-    //    {
-    //      get
-    //      {
-    //        if (protocol == 6)
-    //        {
-    //          return Protocol.TCP;
-    //        }
-    //        else if (protocol == 17)
-    //        {
-    //          return Protocol.UDP;
-    //        }
-    //        else
-    //        {
-    //          return Protocol.Unknown;
-    //        }
-    //      }
-    //    }
+
+
+    public string GetSrcIPAddressString()
+    {
+      return (srcIPAddress & 0xff) + "." +
+             ((srcIPAddress >> 8) & 0xff) + "." +
+             ((srcIPAddress >> 16) & 0xff) + "." +
+             ((srcIPAddress >> 24) & 0xff);
+    }
+
+
+    public string GetDestIPAddressString()
+    {
+      return (destIPAddress & 0xff) + "." +
+             ((destIPAddress >> 8) & 0xff) + "." +
+             ((destIPAddress >> 16) & 0xff) + "." +
+             ((destIPAddress >> 24) & 0xff);
+    }
+
+
+    public string GetProtocolString()
+    {
+      switch (protocol)
+      {
+        case (byte)Protocol.ICMP:
+          return "ICMP";
+        case (byte)Protocol.TCP:
+          return "TCP";
+        case (byte)Protocol.UDP:
+          return "UDP";
+      }
+      return "unknown";
+    }
   }
 }
