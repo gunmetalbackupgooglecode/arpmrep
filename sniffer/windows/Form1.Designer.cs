@@ -39,6 +39,8 @@
       this.destIPColumn = new System.Windows.Forms.ColumnHeader();
       this.destPortColumn = new System.Windows.Forms.ColumnHeader();
       this.protocolColumn = new System.Windows.Forms.ColumnHeader();
+      this.packetTreeView = new System.Windows.Forms.TreeView();
+      this.packetRichTextBox = new System.Windows.Forms.RichTextBox();
       this.SuspendLayout();
       // 
       // ipTextBox
@@ -88,12 +90,16 @@
             this.protocolColumn});
       this.packetsListView.FullRowSelect = true;
       this.packetsListView.GridLines = true;
-      this.packetsListView.Location = new System.Drawing.Point(43, 181);
+      this.packetsListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+      this.packetsListView.HideSelection = false;
+      this.packetsListView.Location = new System.Drawing.Point(27, 137);
+      this.packetsListView.MultiSelect = false;
       this.packetsListView.Name = "packetsListView";
-      this.packetsListView.Size = new System.Drawing.Size(416, 154);
+      this.packetsListView.Size = new System.Drawing.Size(748, 178);
       this.packetsListView.TabIndex = 4;
       this.packetsListView.UseCompatibleStateImageBehavior = false;
       this.packetsListView.View = System.Windows.Forms.View.Details;
+      this.packetsListView.SelectedIndexChanged += new System.EventHandler(this.packetsListView_SelectedIndexChanged);
       // 
       // numberColumn
       // 
@@ -103,32 +109,51 @@
       // srcIPColumn
       // 
       this.srcIPColumn.Text = "Source IP";
-      this.srcIPColumn.Width = 67;
+      this.srcIPColumn.Width = 118;
       // 
       // srcPorCcolumn
       // 
       this.srcPorCcolumn.Text = "Source Port";
-      this.srcPorCcolumn.Width = 74;
+      this.srcPorCcolumn.Width = 152;
       // 
       // destIPColumn
       // 
       this.destIPColumn.Text = "Destination IP";
-      this.destIPColumn.Width = 85;
+      this.destIPColumn.Width = 122;
       // 
       // destPortColumn
       // 
       this.destPortColumn.Text = "Destination Port";
-      this.destPortColumn.Width = 94;
+      this.destPortColumn.Width = 123;
       // 
       // protocolColumn
       // 
       this.protocolColumn.Text = "Protocol";
+      this.protocolColumn.Width = 132;
+      // 
+      // packetTreeView
+      // 
+      this.packetTreeView.Location = new System.Drawing.Point(27, 335);
+      this.packetTreeView.Name = "packetTreeView";
+      this.packetTreeView.Size = new System.Drawing.Size(748, 140);
+      this.packetTreeView.TabIndex = 5;
+      // 
+      // packetRichTextBox
+      // 
+      this.packetRichTextBox.Location = new System.Drawing.Point(27, 493);
+      this.packetRichTextBox.Name = "packetRichTextBox";
+      this.packetRichTextBox.ReadOnly = true;
+      this.packetRichTextBox.Size = new System.Drawing.Size(748, 96);
+      this.packetRichTextBox.TabIndex = 6;
+      this.packetRichTextBox.Text = "";
       // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(500, 359);
+      this.ClientSize = new System.Drawing.Size(807, 611);
+      this.Controls.Add(this.packetRichTextBox);
+      this.Controls.Add(this.packetTreeView);
       this.Controls.Add(this.packetsListView);
       this.Controls.Add(this.stopButton);
       this.Controls.Add(this.startButton);
@@ -154,6 +179,8 @@
     private System.Windows.Forms.ColumnHeader destIPColumn;
     private System.Windows.Forms.ColumnHeader destPortColumn;
     private System.Windows.Forms.ColumnHeader protocolColumn;
+    private System.Windows.Forms.TreeView packetTreeView;
+    private System.Windows.Forms.RichTextBox packetRichTextBox;
   }
 }
 
