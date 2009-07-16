@@ -1,6 +1,6 @@
 ﻿// http://www.networksorcery.com/enp/protocol/ip.htm
 
-using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 
@@ -14,39 +14,35 @@ namespace PigSniffer
     Reserved = -1
   };
 
-  class IPHeader
+  class IPHeader : Packet
   {
     /// <summary>
     /// 4 - IP
     /// </summary>
-    private byte version;                 // 0 (4)
+    private readonly byte version;                 // 0 (4)
     /// <summary>
     /// IP header length in dwords
     /// </summary>
-    private byte IHL;                     // 4 (4)
-    private byte differentiatedServices;  // 8 (8)
+    private readonly byte IHL;                     // 4 (4)
+    private readonly byte differentiatedServices;  // 8 (8)
     /// <summary>
     /// Whole packet's lenght in bytes
     /// </summary>
-    private ushort totalLength;           // 16 (16)
-    private ushort identification;        // 32 (16)
-    private byte flags;                   // 48 (3)
-    private ushort fragmentOffset;        // 51 (13)
+    private readonly ushort totalLength;           // 16 (16)
+    private readonly ushort identification;        // 32 (16)
+    private readonly byte flags;                   // 48 (3)
+    private readonly ushort fragmentOffset;        // 51 (13)
     /// <summary>
     /// time to live
     /// </summary>
-    private byte TTL;                     // 64 (8)
-    private byte protocol;                // 72 (8)
-    private ushort checksum;              // 80 (16)
-    private uint srcIPAddress;            // 96 (32)
-    private uint destIPAddress;           // 128 (32)
-
-    private byte[] ipData = new byte[4096];
-    private byte[] innerData = new byte[4096];
-    private int length;
+    private readonly byte TTL;                     // 64 (8)
+    private readonly byte protocol;                // 72 (8)
+    private readonly ushort checksum;              // 80 (16)
+    private readonly uint srcIPAddress;            // 96 (32)
+    private readonly uint destIPAddress;           // 128 (32)
 
 
-    public IPHeader(byte[] data, int size)
+    public IPHeader(byte[] data, int size) : base(data, size)
     {
       using (var memoryStream = new MemoryStream(data, 0, size))
       {
@@ -67,10 +63,79 @@ namespace PigSniffer
         srcIPAddress = (uint)(binaryReader.ReadInt32());
         destIPAddress = (uint)(binaryReader.ReadInt32());
 
-        length = IHL * 4;
-        Array.Copy(data, 0, ipData, 0, length);
-        Array.Copy(data, length, innerData, 0, totalLength - length);
+        headerLength = IHL * 4;
+        innerPacket = null;
       }
+    }
+
+
+    public override string GetName()
+    {
+      return "IP";
+    }
+
+
+    public override List<string> GetHeaderValues()
+    {
+      var headerValues = new List<string>();
+
+      string versionDescription;
+      switch (version)
+      {
+        case 0: 
+        case 15: versionDescription = "reserved"; break;
+        case 4: versionDescription = "IP"; break;
+        case 5: versionDescription = "ST"; break;
+        case 6: versionDescription = "SIP, SIPP"; break;
+        case 7: versionDescription = "TP/IX"; break;
+        case 8: versionDescription = "PIP"; break;
+        case 9: versionDescription = "TUBA"; break;
+        default: versionDescription = "unknown"; break;
+      }
+      headerValues.Add(string.Format("Version: {0} ({1})", version, versionDescription));
+
+      headerValues.Add(string.Format("Internet Header Length: 0x{0:X}", IHL));
+
+      string precedence;
+      switch (differentiatedServices >> 5)
+      {
+        case 0: precedence = "Routine"; break;
+        case 1: precedence = "Priority"; break;
+        case 2: precedence = "Immediate"; break;
+        case 3: precedence = "Flash"; break;
+        case 4: precedence = "Flash Override"; break;
+        case 5: precedence = "CRITIC/ECP"; break;
+        case 6: precedence = "Internetwork Control"; break;
+        case 7: precedence = "Network Control"; break;
+        default: precedence = "unknown"; break;
+      }
+      string delay = (1 == (differentiatedServices & 0x10)) ? "Normal Delay" : "Low Delay";
+      string throughput = (1 == (differentiatedServices & 8)) ? "Normal Throughput" : "High Throughput";
+      string relibility = (1 == (differentiatedServices & 4)) ? "Normal Relibility" : "High Relibility";
+      headerValues.Add(string.Format("Differentiated Services: 0x{0:X} ({1}, {2}, {3}, {4})",
+        differentiatedServices, precedence, delay, throughput, relibility));
+
+      headerValues.Add(string.Format("Total length: 0x{0:X}", totalLength));
+      headerValues.Add(string.Format("Identification: 0x{0:X}", identification));
+
+      string flagsDF = (0 == (flags & 2)) ? "May Fragment" : "Don't Fragment";
+      string flagsMF = (0 == (flags & 1)) ? "Last Fragment" : "More fragments follow this fragment";
+      headerValues.Add(string.Format("Flags: 0x{0:X} ({1}, {2})",
+        flags, flagsDF, flagsMF));
+
+      headerValues.Add(string.Format("Fragment Offset: 0x{0:X}", fragmentOffset));
+      headerValues.Add(string.Format("Time to Live: 0x{0:X}", TTL));
+      headerValues.Add(string.Format("Protocol: 0x{0:X} ({1})",
+        protocol, GetProtocolString()));
+      headerValues.Add(string.Format("Checksum: 0x{0:X}", checksum));
+      headerValues.Add(string.Format("Source IP address: 0x{0:X} ({1})",
+        srcIPAddress, GetSrcIPAddressString()));
+      headerValues.Add(string.Format("Destination IP address: 0x{0:X} ({1})",
+        destIPAddress, GetDestIPAddressString()));
+
+      // TODO: parse options
+
+      return headerValues;
     }
 
 
