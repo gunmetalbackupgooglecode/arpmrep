@@ -49,13 +49,24 @@ namespace PigSniffer
     private void startButton_Click(object sender, EventArgs e)
     {
       socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-      socket.Bind(new IPEndPoint(IPAddress.Any, 0)); // TODO: obtain data
+      socket.Bind(new IPEndPoint(IPAddress.Parse("192.168.61.148"), 0)); // TODO: obtain data
       socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
 
-//      var byTrue = new byte[]{1, 0, 0, 0};
-//      var byOut = new byte[4];
+      try
+      {
+        // http://msdn.microsoft.com/en-us/library/ms741621(VS.85).aspx
+        // try to enable a socket to receive all IP packets on the network
+        // limits: socket cannot be binded to IPAddress.Any
+        var inValue = BitConverter.GetBytes(1); // RCVALL_ON
+        var outValue = BitConverter.GetBytes(0);
 
-//      socket.IOControl(IOControlCode.ReceiveAll, byTrue, byOut);
+        socket.IOControl(IOControlCode.ReceiveAll, inValue, outValue);
+      }
+      catch (SocketException ex)
+      {
+        MessageBox.Show("Could not enable promiscuous mode. Socket exception error code = " + ex.ErrorCode,
+          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
 
       isOnline = true;
       socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
@@ -69,6 +80,20 @@ namespace PigSniffer
     private void stopButton_Click(object sender, EventArgs e)
     {
       isOnline = false;
+
+      try
+      {
+        // disable promiscuous mode
+        var inValue = BitConverter.GetBytes(0); // RCVALL_OFF
+        var outValue = BitConverter.GetBytes(0);
+
+        socket.IOControl(IOControlCode.ReceiveAll, inValue, outValue);
+      }
+      catch (SocketException ex)
+      {
+        MessageBox.Show("Could not disable promiscuous mode. Socket exception error code = " + ex.ErrorCode,
+          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
 
       startButton.Enabled = true;
       stopButton.Enabled = false;
@@ -98,7 +123,7 @@ namespace PigSniffer
 
     private void ParseData(byte[] data, int count)
     {
-      var ethernetHeader = new IPHeader(data, count);
+      var ethernetHeader = new IPPacket(data, count);
 
       packets.Add(ethernetHeader);
       ++ packetNumber;
@@ -128,12 +153,14 @@ namespace PigSniffer
       }
 
       Packet packet = packets[packetsListView.SelectedIndices[0]];
+      Packet nextPacket = packet;
       var dataStringBuilder = new StringBuilder();
 
       packetTreeView.BeginUpdate();
       packetTreeView.Nodes.Clear();
-      while (packet != null)
+      while (nextPacket != null)
       {
+        packet = nextPacket;
         TreeNode curTreeNode = packetTreeView.Nodes.Add(packet.GetName());
 
         foreach (string headerValue in packet.GetHeaderValues())
@@ -148,9 +175,14 @@ namespace PigSniffer
         }
         dataStringBuilder.AppendLine();
         
-        packet = packet.GetInnerPacket();
+        nextPacket = packet.GetInnerPacket();
       }
       packetTreeView.EndUpdate();
+      dataStringBuilder.Append("Data: ");
+      foreach (byte b in packet.GetInnerData())
+      {
+        dataStringBuilder.AppendFormat("{0:X}", b);
+      }
       packetRichTextBox.Text = dataStringBuilder.ToString();
     }
   }

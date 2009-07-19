@@ -1,8 +1,7 @@
-﻿// http://www.networksorcery.com/enp/protocol/ip.htm
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
+
 
 namespace PigSniffer
 {
@@ -14,7 +13,8 @@ namespace PigSniffer
     Reserved = -1
   };
 
-  class IPHeader : Packet
+  // http://www.networksorcery.com/enp/protocol/ip.htm
+  class IPPacket : Packet
   {
     /// <summary>
     /// 4 - IP
@@ -42,7 +42,7 @@ namespace PigSniffer
     private readonly uint destIPAddress;           // 128 (32)
 
 
-    public IPHeader(byte[] data, int size) : base(data, size)
+    public IPPacket(byte[] data, int size) : base(data, size)
     {
       using (var memoryStream = new MemoryStream(data, 0, size))
       {
@@ -60,11 +60,18 @@ namespace PigSniffer
         TTL = binaryReader.ReadByte();
         protocol = binaryReader.ReadByte();
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-        srcIPAddress = (uint)(binaryReader.ReadInt32());
-        destIPAddress = (uint)(binaryReader.ReadInt32());
+        srcIPAddress = (uint)IPAddress.NetworkToHostOrder(binaryReader.ReadInt32());
+        destIPAddress = (uint)IPAddress.NetworkToHostOrder(binaryReader.ReadInt32());
 
         headerLength = IHL * 4;
-        innerPacket = null;
+
+        byte[] innerData = GetInnerData();
+        switch (protocol)
+        {
+          case (byte)Protocol.ICMP: innerPacket = new ICMPPacket(innerData, innerData.Length); break;
+          case (byte)Protocol.TCP: innerPacket = new TCPPacket(innerData, innerData.Length); break;
+          case (byte)Protocol.UDP: innerPacket = new UDPPacket(innerData, innerData.Length); break;
+        }
       }
     }
 
@@ -141,19 +148,19 @@ namespace PigSniffer
 
     public string GetSrcIPAddressString()
     {
-      return (srcIPAddress & 0xff) + "." +
-             ((srcIPAddress >> 8) & 0xff) + "." +
+      return ((srcIPAddress >> 24) & 0xff) + "." +
              ((srcIPAddress >> 16) & 0xff) + "." +
-             ((srcIPAddress >> 24) & 0xff);
+             ((srcIPAddress >> 8) & 0xff) + "." +
+             (srcIPAddress & 0xff);
     }
 
 
     public string GetDestIPAddressString()
     {
-      return (destIPAddress & 0xff) + "." +
-             ((destIPAddress >> 8) & 0xff) + "." +
+      return ((destIPAddress >> 24) & 0xff) + "." +
              ((destIPAddress >> 16) & 0xff) + "." +
-             ((destIPAddress >> 24) & 0xff);
+             ((destIPAddress >> 8) & 0xff) + "." +
+             (destIPAddress & 0xff);
     }
 
 
