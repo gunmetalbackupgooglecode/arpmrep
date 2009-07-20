@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
@@ -9,6 +10,10 @@ namespace PigSniffer
 {
   public partial class Form1 : Form
   {
+    /// <summary>
+    /// list of network interfaces
+    /// </summary>
+    private readonly List<NetworkInterface> networkInterfacesList = new List<NetworkInterface>();
     /// <summary>
     /// true if PigSniffer is capturing packets right now
     /// </summary>
@@ -35,6 +40,34 @@ namespace PigSniffer
     {
       InitializeComponent();
 
+      foreach(NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces())
+      {
+        networkInterfacesList.Add(networkInterface);
+
+        string addresses;
+        UnicastIPAddressInformationCollection addressInfoCollection =
+          networkInterface.GetIPProperties().UnicastAddresses;
+
+        if (0 == addressInfoCollection.Count)
+        {
+          addresses = "no IPs";
+        }
+        else
+        {
+          var addressedStringBuilder = new StringBuilder();
+
+          foreach (UnicastIPAddressInformation addressInfo in addressInfoCollection)
+          {
+            addressedStringBuilder.Append(addressInfo.Address.ToString());
+            addressedStringBuilder.Append(", ");
+          }
+          addressedStringBuilder.Remove(addressedStringBuilder.Length - 2, 2);
+          addresses = addressedStringBuilder.ToString();
+        }
+
+        nicsComboBox.Items.Add(string.Format("{0} ({1})", networkInterface.Name, addresses));
+      }
+
       stopButton.Enabled = false;
     }
 
@@ -48,8 +81,31 @@ namespace PigSniffer
 
     private void startButton_Click(object sender, EventArgs e)
     {
+      // get bind IP
+      int networkInterfaceIndex = nicsComboBox.SelectedIndex;
+
+      if (-1 == networkInterfaceIndex)
+      {
+        MessageBox.Show("Choose network interface please", "Error",
+          MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      NetworkInterface networkInterface = networkInterfacesList[networkInterfaceIndex];
+      UnicastIPAddressInformationCollection addressInfoCollection =
+        networkInterface.GetIPProperties().UnicastAddresses;
+
+      if (0 == addressInfoCollection.Count)
+      {
+        MessageBox.Show("Selected network interface does not have any IP", "Error",
+          MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return;
+      }
+
+      IPAddress bindIP = addressInfoCollection[0].Address;
+
       socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-      socket.Bind(new IPEndPoint(IPAddress.Parse("192.168.61.148"), 0)); // TODO: obtain data
+      socket.Bind(new IPEndPoint(bindIP, 0));
       socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
 
       try

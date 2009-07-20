@@ -28,6 +28,7 @@
     /// </summary>
     private void InitializeComponent()
     {
+      System.Windows.Forms.Label nicsLabel;
       this.ipTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.startButton = new System.Windows.Forms.Button();
@@ -41,6 +42,8 @@
       this.protocolColumn = new System.Windows.Forms.ColumnHeader();
       this.packetTreeView = new System.Windows.Forms.TreeView();
       this.packetRichTextBox = new System.Windows.Forms.RichTextBox();
+      this.nicsComboBox = new System.Windows.Forms.ComboBox();
+      nicsLabel = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // ipTextBox
@@ -147,11 +150,31 @@
       this.packetRichTextBox.TabIndex = 6;
       this.packetRichTextBox.Text = "";
       // 
+      // nicsLabel
+      // 
+      nicsLabel.AutoSize = true;
+      nicsLabel.Location = new System.Drawing.Point(299, 37);
+      nicsLabel.Name = "nicsLabel";
+      nicsLabel.Size = new System.Drawing.Size(100, 13);
+      nicsLabel.TabIndex = 7;
+      nicsLabel.Text = "Network Interfaces:";
+      // 
+      // nicsComboBox
+      // 
+      this.nicsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.nicsComboBox.FormattingEnabled = true;
+      this.nicsComboBox.Location = new System.Drawing.Point(405, 33);
+      this.nicsComboBox.Name = "nicsComboBox";
+      this.nicsComboBox.Size = new System.Drawing.Size(285, 21);
+      this.nicsComboBox.TabIndex = 9;
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(807, 611);
+      this.Controls.Add(this.nicsComboBox);
+      this.Controls.Add(nicsLabel);
       this.Controls.Add(this.packetRichTextBox);
       this.Controls.Add(this.packetTreeView);
       this.Controls.Add(this.packetsListView);
@@ -181,6 +204,7 @@
     private System.Windows.Forms.ColumnHeader protocolColumn;
     private System.Windows.Forms.TreeView packetTreeView;
     private System.Windows.Forms.RichTextBox packetRichTextBox;
+    private System.Windows.Forms.ComboBox nicsComboBox;
   }
 }
 

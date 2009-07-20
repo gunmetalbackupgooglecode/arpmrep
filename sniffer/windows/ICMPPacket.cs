@@ -22,15 +22,15 @@ namespace PigSniffer
         type = binaryReader.ReadByte();
         code = binaryReader.ReadByte();
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-
-        switch (type)
-        {
-          case 0:
-          case 8: headerLength = 8; break;
-          default: headerLength = 4; break;
-        }
-        innerPacket = null;
       }
+
+      switch (type)
+      {
+        case 0:
+        case 8: headerLength = 8; break;
+        default: headerLength = 4; break;
+      }
+      innerPacket = null;
     }
 
 

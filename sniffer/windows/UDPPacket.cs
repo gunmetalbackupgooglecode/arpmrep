@@ -24,10 +24,10 @@ namespace PigSniffer
         destPort = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         length = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-
-        headerLength = length;
-        innerPacket = null;
       }
+
+      headerLength = length;
+      innerPacket = null;
     }
 
 

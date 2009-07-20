@@ -55,6 +55,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="ICMPPacket.cs" />
+    <Compile Include="IGMPPacket.cs" />
     <Compile Include="IPPacket.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="Program.cs" />
