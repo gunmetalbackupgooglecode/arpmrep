@@ -40,10 +40,10 @@ namespace PigSniffer
         window = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         urgentPointer = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
-
-        headerLength = dataOffset * 4;
-        innerPacket = null;
       }
+
+      headerLength = dataOffset * 4;
+      innerPacket = null;
     }
 
     public override string GetName()

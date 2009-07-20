@@ -5,9 +5,11 @@ using System.Net;
 
 namespace PigSniffer
 {
+  // after edit don't forget to update IPPacket.GetProtocolString()
   public enum Protocol
   {
     ICMP = 1,
+    IGMP = 2,
     TCP = 6,
     UDP = 17,
     Reserved = -1
@@ -62,16 +64,17 @@ namespace PigSniffer
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
         srcIPAddress = (uint)IPAddress.NetworkToHostOrder(binaryReader.ReadInt32());
         destIPAddress = (uint)IPAddress.NetworkToHostOrder(binaryReader.ReadInt32());
+      }
 
-        headerLength = IHL * 4;
+      headerLength = IHL * 4;
 
-        byte[] innerData = GetInnerData();
-        switch (protocol)
-        {
-          case (byte)Protocol.ICMP: innerPacket = new ICMPPacket(innerData, innerData.Length); break;
-          case (byte)Protocol.TCP: innerPacket = new TCPPacket(innerData, innerData.Length); break;
-          case (byte)Protocol.UDP: innerPacket = new UDPPacket(innerData, innerData.Length); break;
-        }
+      byte[] innerData = GetInnerData();
+      switch (protocol)
+      {
+        case (byte)Protocol.ICMP: innerPacket = new ICMPPacket(innerData, innerData.Length); break;
+        case (byte)Protocol.IGMP: innerPacket = new IGMPPacket(innerData, innerData.Length); break;
+        case (byte)Protocol.TCP: innerPacket = new TCPPacket(innerData, innerData.Length); break;
+        case (byte)Protocol.UDP: innerPacket = new UDPPacket(innerData, innerData.Length); break;
       }
     }
 
@@ -168,12 +171,10 @@ namespace PigSniffer
     {
       switch (protocol)
       {
-        case (byte)Protocol.ICMP:
-          return "ICMP";
-        case (byte)Protocol.TCP:
-          return "TCP";
-        case (byte)Protocol.UDP:
-          return "UDP";
+        case (byte)Protocol.ICMP: return "ICMP";
+        case (byte)Protocol.IGMP: return "IGMP";
+        case (byte)Protocol.TCP: return "TCP";
+        case (byte)Protocol.UDP: return "UDP";
       }
       return "unknown";
     }
