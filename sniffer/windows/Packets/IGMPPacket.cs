@@ -2,9 +2,9 @@
 using System.IO;
 using System.Net;
 
-namespace PigSniffer
+namespace PigSniffer.Packets
 {
-  // http://www.networksorcery.com/enp/protocol/igmp.htm
+  // // http://www.networksorcery.com/enp/protocol/igmp.htm
   class IGMPPacket : Packet
   {
     private readonly byte type;             // 0 (8)
@@ -63,7 +63,7 @@ namespace PigSniffer
       headerValues.Add(string.Format("Max Response Time: 0x{0:X}", maxResponseTime));
       headerValues.Add(string.Format("IGMP Checksum: 0x{0:X}", checksum));
       headerValues.Add(string.Format("Group Address: 0x{0:X} ({1})",
-        groupAddress, GetGroupAddressString()));
+                                     groupAddress, GetGroupAddressString()));
 
       return headerValues;
     }
@@ -81,5 +81,7 @@ namespace PigSniffer
              ((groupAddress >> 8) & 0xff) + "." +
              (groupAddress & 0xff);
     }
+
   }
+
 }

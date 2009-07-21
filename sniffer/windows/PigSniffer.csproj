@@ -48,20 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\PigSnifferForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\PigSnifferForm.Designer.cs">
+      <DependentUpon>PigSnifferForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ICMPPacket.cs" />
-    <Compile Include="IGMPPacket.cs" />
-    <Compile Include="IPPacket.cs" />
-    <Compile Include="Packet.cs" />
+    <Compile Include="Packets\ICMPPacket.cs" />
+    <Compile Include="Packets\IGMPPacket.cs" />
+    <Compile Include="Packets\IPPacket.cs" />
+    <Compile Include="Packets\Packet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\PigSnifferForm.resx">
+      <DependentUpon>PigSnifferForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -81,8 +81,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="TCPPacket.cs" />
-    <Compile Include="UDPPacket.cs" />
+    <Compile Include="Packets\TCPPacket.cs" />
+    <Compile Include="Packets\UDPPacket.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

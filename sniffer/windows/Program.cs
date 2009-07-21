@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using PigSniffer.Forms;
 
 namespace PigSniffer
 {
@@ -10,7 +11,7 @@ namespace PigSniffer
     {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new Form1());
+      Application.Run(new PigSnifferForm());
     }
   }
 }

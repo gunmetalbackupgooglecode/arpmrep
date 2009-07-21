@@ -1,11 +1,11 @@
-﻿namespace PigSniffer
+﻿namespace PigSniffer.Forms
 {
-  partial class Form1
+  partial class PigSnifferForm
   {
     /// <summary>
     /// Required designer variable.
     /// </summary>
-    private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components;
 
     /// <summary>
     /// Clean up any resources being used.
@@ -45,6 +45,15 @@
       this.nicsComboBox = new System.Windows.Forms.ComboBox();
       nicsLabel = new System.Windows.Forms.Label();
       this.SuspendLayout();
+      // 
+      // nicsLabel
+      // 
+      nicsLabel.AutoSize = true;
+      nicsLabel.Location = new System.Drawing.Point(299, 37);
+      nicsLabel.Name = "nicsLabel";
+      nicsLabel.Size = new System.Drawing.Size(100, 13);
+      nicsLabel.TabIndex = 7;
+      nicsLabel.Text = "Network Interfaces:";
       // 
       // ipTextBox
       // 
@@ -150,15 +159,6 @@
       this.packetRichTextBox.TabIndex = 6;
       this.packetRichTextBox.Text = "";
       // 
-      // nicsLabel
-      // 
-      nicsLabel.AutoSize = true;
-      nicsLabel.Location = new System.Drawing.Point(299, 37);
-      nicsLabel.Name = "nicsLabel";
-      nicsLabel.Size = new System.Drawing.Size(100, 13);
-      nicsLabel.TabIndex = 7;
-      nicsLabel.Text = "Network Interfaces:";
-      // 
       // nicsComboBox
       // 
       this.nicsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -168,7 +168,7 @@
       this.nicsComboBox.Size = new System.Drawing.Size(285, 21);
       this.nicsComboBox.TabIndex = 9;
       // 
-      // Form1
+      // PigSnifferForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -182,8 +182,9 @@
       this.Controls.Add(this.startButton);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.ipTextBox);
-      this.Name = "Form1";
+      this.Name = "PigSnifferForm";
       this.Text = "PigSniffer";
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.pigSnifferForm_FormClosing);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -207,4 +208,3 @@
     private System.Windows.Forms.ComboBox nicsComboBox;
   }
 }
-

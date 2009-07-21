@@ -3,8 +3,9 @@ using System.IO;
 using System.Net;
 
 
-namespace PigSniffer
+namespace PigSniffer.Packets
 {
+  // http://www.networksorcery.com/enp/protocol/icmp.htm
   // http://security.maruhn.com/iptables-tutorial/x1078.html
   class ICMPPacket : Packet
   {
@@ -66,13 +67,15 @@ namespace PigSniffer
         if (0 == type || 8 == type)
         {
           headerValues.Add(string.Format("Identifier: 0x{0:X}",
-            (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16())));
+                                         (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16())));
           headerValues.Add(string.Format("Sequence number: 0x{0:X}",
-            (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16())));
+                                         (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16())));
         }
       }
 
       return headerValues;
     }
+
   }
+
 }
