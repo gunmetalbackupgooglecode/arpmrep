@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -40,6 +41,8 @@ namespace PigSniffer.Forms
     public PigSnifferForm()
     {
       InitializeComponent();
+
+      MinimumSize = new Size(Size.Width, Size.Height);
 
       foreach(NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces())
       {
@@ -199,11 +202,27 @@ namespace PigSniffer.Forms
         nextPacket = packet.GetInnerPacket();
       }
       packetTreeView.EndUpdate();
-      dataStringBuilder.Append("Data: ");
-      foreach (byte b in packet.GetInnerData())
+
+      byte[] packetData = packet.GetInnerData();
+      
+      if (packetData.Length != 0)
       {
-        dataStringBuilder.AppendFormat("{0:X}", b);
+        dataStringBuilder.AppendLine();
+        dataStringBuilder.Append("Data: ");
+        foreach (byte b in packetData)
+        {
+          dataStringBuilder.AppendFormat("{0:X}", b);
+        }
+        dataStringBuilder.AppendLine();
+        dataStringBuilder.AppendLine();
+        dataStringBuilder.Append("Data text view: ");
+        foreach (byte b in packetData)
+        {
+          char c = (0 == b) ? ' ' : (char)b;
+          dataStringBuilder.Append(c);
+        }
       }
+
       packetRichTextBox.Text = dataStringBuilder.ToString();
     }
 
