@@ -3,9 +3,10 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace PigSniffer
+
+namespace PigSniffer.Packets
 {
-  // http://www.networksorcery.com/enp/protocol/tcp.htm
+  // // http://www.networksorcery.com/enp/protocol/tcp.htm
   class TCPPacket : Packet
   {
     private readonly ushort srcPort;        // 0 (16)
@@ -46,10 +47,12 @@ namespace PigSniffer
       innerPacket = null;
     }
 
+
     public override string GetName()
     {
       return "TCP";
     }
+
 
     public override List<string> GetHeaderValues()
     {
@@ -101,5 +104,19 @@ namespace PigSniffer
 
       return headerValues;
     }
+
+
+    public ushort GetSrcPort()
+    {
+      return srcPort;
+    }
+
+
+    public ushort GetDestPort()
+    {
+      return destPort;
+    }
+
   }
+
 }

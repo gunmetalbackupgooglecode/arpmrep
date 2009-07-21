@@ -5,10 +5,11 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
+using PigSniffer.Packets;
 
-namespace PigSniffer
+namespace PigSniffer.Forms
 {
-  public partial class Form1 : Form
+  public partial class PigSnifferForm : Form
   {
     /// <summary>
     /// list of network interfaces
@@ -36,7 +37,7 @@ namespace PigSniffer
     private readonly List<Packet> packets = new List<Packet>();
 
 
-    public Form1()
+    public PigSnifferForm()
     {
       InitializeComponent();
 
@@ -72,12 +73,20 @@ namespace PigSniffer
     }
 
 
-    private delegate void AddPacketsListViewItemDelegate(ListViewItem item);
-    private void AddPacketsListViewItemCallback(ListViewItem item)
+    #region Form events
+
+    private void pigSnifferForm_FormClosing(object sender, FormClosingEventArgs e)
     {
-      packetsListView.Items.Add(item);
+      if (isOnline)
+      {
+        stopButton.PerformClick();
+      }
     }
 
+    #endregion
+
+
+    #region Controls events
 
     private void startButton_Click(object sender, EventArgs e)
     {
@@ -87,7 +96,7 @@ namespace PigSniffer
       if (-1 == networkInterfaceIndex)
       {
         MessageBox.Show("Choose network interface please", "Error",
-          MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
@@ -98,7 +107,7 @@ namespace PigSniffer
       if (0 == addressInfoCollection.Count)
       {
         MessageBox.Show("Selected network interface does not have any IP", "Error",
-          MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
@@ -121,18 +130,18 @@ namespace PigSniffer
       catch (SocketException ex)
       {
         MessageBox.Show("Could not enable promiscuous mode. Socket exception error code = " + ex.ErrorCode,
-          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
       isOnline = true;
       socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
-        new AsyncCallback(SocketCallback), null);
-      
+                          new AsyncCallback(SocketCallback), null);
+
       startButton.Enabled = false;
       stopButton.Enabled = true;
     }
 
-    
+
     private void stopButton_Click(object sender, EventArgs e)
     {
       isOnline = false;
@@ -144,60 +153,16 @@ namespace PigSniffer
         var outValue = BitConverter.GetBytes(0);
 
         socket.IOControl(IOControlCode.ReceiveAll, inValue, outValue);
+        socket.Close();
       }
       catch (SocketException ex)
       {
         MessageBox.Show("Could not disable promiscuous mode. Socket exception error code = " + ex.ErrorCode,
-          "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
 
       startButton.Enabled = true;
       stopButton.Enabled = false;
-    }
-
-    
-    private void SocketCallback(IAsyncResult ar)
-    {
-      try
-      {
-        int count = socket.EndReceive(ar);
-
-        ParseData(socketData, count);
-
-        if (isOnline)
-        {
-          socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
-            new AsyncCallback(SocketCallback), null);
-        }
-      }
-      catch (SocketException ex)
-      {
-        MessageBox.Show("Error: " + ex);
-      }
-    }
-
-
-    private void ParseData(byte[] data, int count)
-    {
-      var ethernetHeader = new IPPacket(data, count);
-
-      packets.Add(ethernetHeader);
-      ++ packetNumber;
-
-      var item = new ListViewItem(new[] { packetNumber.ToString(),
-          ethernetHeader.GetSrcIPAddressString(), "",
-          ethernetHeader.GetDestIPAddressString(), "",
-          ethernetHeader.GetProtocolString()});
-      
-      if (InvokeRequired)
-      {
-        var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);
-        Invoke(addDelegate, item);
-      }
-      else
-      {
-        AddPacketsListViewItemCallback(item);
-      }
     }
 
 
@@ -230,7 +195,7 @@ namespace PigSniffer
           dataStringBuilder.AppendFormat("{0:X}", b);
         }
         dataStringBuilder.AppendLine();
-        
+
         nextPacket = packet.GetInnerPacket();
       }
       packetTreeView.EndUpdate();
@@ -241,5 +206,66 @@ namespace PigSniffer
       }
       packetRichTextBox.Text = dataStringBuilder.ToString();
     }
+
+    #endregion
+
+
+    private delegate void AddPacketsListViewItemDelegate(ListViewItem item);
+    private void AddPacketsListViewItemCallback(ListViewItem item)
+    {
+      packetsListView.Items.Add(item);
+    }
+
+
+    private void SocketCallback(IAsyncResult ar)
+    {
+      try
+      {
+        int count = socket.EndReceive(ar);
+
+        ParseData(socketData, count);
+
+        if (isOnline)
+        {
+          socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
+                              new AsyncCallback(SocketCallback), null);
+        }
+      }
+      catch (SocketException ex)
+      {
+        MessageBox.Show("Error: " + ex);
+        Close();
+      }
+      catch (ObjectDisposedException)
+      {
+        // stop button was clicked - do nothing
+      }
+    }
+
+
+    private void ParseData(byte[] data, int count)
+    {
+      var ethernetHeader = new IPPacket(data, count);
+
+      packets.Add(ethernetHeader);
+      ++ packetNumber;
+
+      var item = new ListViewItem(new[] { packetNumber.ToString(),
+                                          ethernetHeader.GetSrcIPAddressString(), ethernetHeader.GetSrcPortString(),
+                                          ethernetHeader.GetDestIPAddressString(), ethernetHeader.GetDestPortString(),
+                                          ethernetHeader.GetProtocolString()});
+      
+      if (InvokeRequired)
+      {
+        var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);
+        Invoke(addDelegate, item);
+      }
+      else
+      {
+        AddPacketsListViewItemCallback(item);
+      }
+    }
+
   }
+
 }

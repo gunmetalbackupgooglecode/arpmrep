@@ -3,13 +3,16 @@ using System.IO;
 using System.Net;
 
 
-namespace PigSniffer
+namespace PigSniffer.Packets
 {
   // http://www.networksorcery.com/enp/protocol/udp.htm
   class UDPPacket : Packet
   {
     private readonly ushort srcPort;  // 0 (16)
     private readonly ushort destPort; // 16 (16)
+    /// <summary>
+    /// Length of header and data in bytes
+    /// </summary>
     private readonly ushort length;   // 32 (16)
     private readonly ushort checksum; // 48 (16)
 
@@ -26,7 +29,7 @@ namespace PigSniffer
         checksum = (ushort)IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
       }
 
-      headerLength = length;
+      headerLength = 8;
       innerPacket = null;
     }
 
@@ -48,5 +51,19 @@ namespace PigSniffer
 
       return headerValues;
     }
+
+
+    public ushort GetSrcPort()
+    {
+      return srcPort;
+    }
+
+
+    public ushort GetDestPort()
+    {
+      return destPort;
+    }
+
   }
+
 }

@@ -3,9 +3,9 @@ using System.IO;
 using System.Net;
 
 
-namespace PigSniffer
+namespace PigSniffer.Packets
 {
-  // after edit don't forget to update IPPacket.GetProtocolString()
+  // // after edit don't forget to update IPPacket.GetProtocolString()
   public enum Protocol
   {
     ICMP = 1,
@@ -15,7 +15,7 @@ namespace PigSniffer
     Reserved = -1
   };
 
-  // http://www.networksorcery.com/enp/protocol/ip.htm
+  // // http://www.networksorcery.com/enp/protocol/ip.htm
   class IPPacket : Packet
   {
     /// <summary>
@@ -43,6 +43,10 @@ namespace PigSniffer
     private readonly uint srcIPAddress;            // 96 (32)
     private readonly uint destIPAddress;           // 128 (32)
 
+    // not IP packet's fields, but it's handy to store them here
+    private readonly ushort srcPort;
+    private readonly ushort destPort;
+
 
     public IPPacket(byte[] data, int size) : base(data, size)
     {
@@ -69,12 +73,27 @@ namespace PigSniffer
       headerLength = IHL * 4;
 
       byte[] innerData = GetInnerData();
+      
       switch (protocol)
       {
-        case (byte)Protocol.ICMP: innerPacket = new ICMPPacket(innerData, innerData.Length); break;
-        case (byte)Protocol.IGMP: innerPacket = new IGMPPacket(innerData, innerData.Length); break;
-        case (byte)Protocol.TCP: innerPacket = new TCPPacket(innerData, innerData.Length); break;
-        case (byte)Protocol.UDP: innerPacket = new UDPPacket(innerData, innerData.Length); break;
+        case (byte)Protocol.ICMP:
+          innerPacket = new ICMPPacket(innerData, innerData.Length);
+          break;
+        case (byte)Protocol.IGMP:
+          innerPacket = new IGMPPacket(innerData, innerData.Length);
+          break;
+        case (byte)Protocol.TCP:
+          var tcpPacket = new TCPPacket(innerData, innerData.Length);
+          innerPacket = tcpPacket;
+          srcPort = tcpPacket.GetSrcPort();
+          destPort = tcpPacket.GetDestPort();
+          break;
+        case (byte)Protocol.UDP:
+          var udpPacket = new UDPPacket(innerData, innerData.Length);
+          innerPacket = udpPacket;
+          srcPort = udpPacket.GetSrcPort();
+          destPort = udpPacket.GetDestPort();
+          break;
       }
     }
 
@@ -123,7 +142,7 @@ namespace PigSniffer
       string throughput = (1 == (differentiatedServices & 8)) ? "Normal Throughput" : "High Throughput";
       string relibility = (1 == (differentiatedServices & 4)) ? "Normal Relibility" : "High Relibility";
       headerValues.Add(string.Format("Differentiated Services: 0x{0:X} ({1}, {2}, {3}, {4})",
-        differentiatedServices, precedence, delay, throughput, relibility));
+                                     differentiatedServices, precedence, delay, throughput, relibility));
 
       headerValues.Add(string.Format("Total length: 0x{0:X}", totalLength));
       headerValues.Add(string.Format("Identification: 0x{0:X}", identification));
@@ -131,17 +150,17 @@ namespace PigSniffer
       string flagsDF = (0 == (flags & 2)) ? "May Fragment" : "Don't Fragment";
       string flagsMF = (0 == (flags & 1)) ? "Last Fragment" : "More fragments follow this fragment";
       headerValues.Add(string.Format("Flags: 0x{0:X} ({1}, {2})",
-        flags, flagsDF, flagsMF));
+                                     flags, flagsDF, flagsMF));
 
       headerValues.Add(string.Format("Fragment Offset: 0x{0:X}", fragmentOffset));
       headerValues.Add(string.Format("Time to Live: 0x{0:X}", TTL));
       headerValues.Add(string.Format("Protocol: 0x{0:X} ({1})",
-        protocol, GetProtocolString()));
+                                     protocol, GetProtocolString()));
       headerValues.Add(string.Format("Checksum: 0x{0:X}", checksum));
       headerValues.Add(string.Format("Source IP address: 0x{0:X} ({1})",
-        srcIPAddress, GetSrcIPAddressString()));
+                                     srcIPAddress, GetSrcIPAddressString()));
       headerValues.Add(string.Format("Destination IP address: 0x{0:X} ({1})",
-        destIPAddress, GetDestIPAddressString()));
+                                     destIPAddress, GetDestIPAddressString()));
 
       // TODO: parse options
 
@@ -178,5 +197,27 @@ namespace PigSniffer
       }
       return "unknown";
     }
+
+
+    public string GetSrcPortString()
+    {
+      if (0 == srcPort)
+      {
+        return "";
+      }
+      return srcPort.ToString();
+    }
+
+
+    public string GetDestPortString()
+    {
+      if (0 == destPort)
+      {
+        return "";
+      }
+      return destPort.ToString();
+    }
+
   }
+
 }
