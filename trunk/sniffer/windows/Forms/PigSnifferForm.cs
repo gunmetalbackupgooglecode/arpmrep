@@ -5,13 +5,18 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using PigSniffer.Packets;
+using Timer=System.Threading.Timer;
+
 
 namespace PigSniffer.Forms
 {
   public partial class PigSnifferForm : Form
   {
+    private const int PACKETS_LIST_VIEW_UPDATE_TIMEOUT = 1000;
+
     /// <summary>
     /// list of network interfaces
     /// </summary>
@@ -36,10 +41,21 @@ namespace PigSniffer.Forms
     /// list of received packets
     /// </summary>
     private readonly List<Packet> packets = new List<Packet>();
+    /// <summary>
+    /// Temporary (or not) solution of ListView flicker problem.
+    /// System updates ListView every PACKETS_LIST_VIEW_UPDATE_TIMEOUT.
+    /// </summary>
+    private readonly List<ListViewItem> updatesForPacketsListView = new List<ListViewItem>();
+    /// <summary>
+    /// Timer for ListView update
+    /// </summary>
+    private readonly Timer updatePacketsListViewTimer;
 
 
     public PigSnifferForm()
     {
+      updatePacketsListViewTimer = new Timer(UpdatePacketsListViewCallback, null, Timeout.Infinite, Timeout.Infinite);
+
       InitializeComponent();
 
       MinimumSize = new Size(Size.Width, Size.Height);
@@ -137,6 +153,7 @@ namespace PigSniffer.Forms
       }
 
       isOnline = true;
+      updatePacketsListViewTimer.Change(PACKETS_LIST_VIEW_UPDATE_TIMEOUT, PACKETS_LIST_VIEW_UPDATE_TIMEOUT);
       socket.BeginReceive(socketData, 0, socketData.Length, SocketFlags.None,
                           new AsyncCallback(SocketCallback), null);
 
@@ -148,6 +165,7 @@ namespace PigSniffer.Forms
     private void stopButton_Click(object sender, EventArgs e)
     {
       isOnline = false;
+      updatePacketsListViewTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
       try
       {
@@ -229,10 +247,10 @@ namespace PigSniffer.Forms
     #endregion
 
 
-    private delegate void AddPacketsListViewItemDelegate(ListViewItem item);
-    private void AddPacketsListViewItemCallback(ListViewItem item)
+    private delegate void AddPacketsListViewItemDelegate(List<ListViewItem> items);
+    private void AddPacketsListViewItemCallback(List<ListViewItem> items)
     {
-      packetsListView.Items.Add(item);
+      packetsListView.Items.AddRange(items.ToArray());
     }
 
 
@@ -274,14 +292,27 @@ namespace PigSniffer.Forms
                                           ethernetHeader.GetDestIPAddressString(), ethernetHeader.GetDestPortString(),
                                           ethernetHeader.GetProtocolString()});
       
-      if (InvokeRequired)
+      lock (updatesForPacketsListView)
       {
-        var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);
-        Invoke(addDelegate, item);
+        updatesForPacketsListView.Add(item);
       }
-      else
+    }
+
+
+    private void UpdatePacketsListViewCallback(object stateInfo)
+    {
+      lock (updatesForPacketsListView)
       {
-        AddPacketsListViewItemCallback(item);
+        if (InvokeRequired)
+        {
+          var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);
+          Invoke(addDelegate, updatesForPacketsListView);
+        }
+        else
+        {
+          AddPacketsListViewItemCallback(updatesForPacketsListView);
+        }
+        updatesForPacketsListView.Clear();
       }
     }
 
