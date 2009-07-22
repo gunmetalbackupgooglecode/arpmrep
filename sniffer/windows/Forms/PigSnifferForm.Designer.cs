@@ -29,7 +29,6 @@
     private void InitializeComponent()
     {
       System.Windows.Forms.Label nicsLabel;
-      System.Windows.Forms.Panel pigSnifferTopPanel;
       System.Windows.Forms.SplitContainer bottomSplitContainer;
       System.Windows.Forms.SplitContainer topSplitContainer;
       this.nicsComboBox = new System.Windows.Forms.ComboBox();
@@ -44,52 +43,48 @@
       this.protocolColumn = new System.Windows.Forms.ColumnHeader();
       this.packetTreeView = new System.Windows.Forms.TreeView();
       this.packetRichTextBox = new System.Windows.Forms.RichTextBox();
+      this.pigSnifferMenuStrip = new System.Windows.Forms.MenuStrip();
+      this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       nicsLabel = new System.Windows.Forms.Label();
-      pigSnifferTopPanel = new System.Windows.Forms.Panel();
       bottomSplitContainer = new System.Windows.Forms.SplitContainer();
       topSplitContainer = new System.Windows.Forms.SplitContainer();
-      pigSnifferTopPanel.SuspendLayout();
       bottomSplitContainer.Panel1.SuspendLayout();
       bottomSplitContainer.Panel2.SuspendLayout();
       bottomSplitContainer.SuspendLayout();
       topSplitContainer.Panel1.SuspendLayout();
       topSplitContainer.Panel2.SuspendLayout();
       topSplitContainer.SuspendLayout();
+      this.pigSnifferMenuStrip.SuspendLayout();
       this.SuspendLayout();
       // 
       // nicsLabel
       // 
+      nicsLabel.Anchor = System.Windows.Forms.AnchorStyles.Top;
       nicsLabel.AutoSize = true;
-      nicsLabel.Location = new System.Drawing.Point(12, 15);
+      nicsLabel.Location = new System.Drawing.Point(76, 34);
       nicsLabel.Name = "nicsLabel";
       nicsLabel.Size = new System.Drawing.Size(100, 13);
       nicsLabel.TabIndex = 7;
       nicsLabel.Text = "Network Interfaces:";
       // 
-      // pigSnifferTopPanel
-      // 
-      pigSnifferTopPanel.Anchor = System.Windows.Forms.AnchorStyles.Top;
-      pigSnifferTopPanel.Controls.Add(nicsLabel);
-      pigSnifferTopPanel.Controls.Add(this.nicsComboBox);
-      pigSnifferTopPanel.Controls.Add(this.startButton);
-      pigSnifferTopPanel.Controls.Add(this.stopButton);
-      pigSnifferTopPanel.Location = new System.Drawing.Point(62, 12);
-      pigSnifferTopPanel.Name = "pigSnifferTopPanel";
-      pigSnifferTopPanel.Size = new System.Drawing.Size(682, 43);
-      pigSnifferTopPanel.TabIndex = 10;
-      // 
       // nicsComboBox
       // 
+      this.nicsComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
       this.nicsComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.nicsComboBox.FormattingEnabled = true;
-      this.nicsComboBox.Location = new System.Drawing.Point(118, 11);
+      this.nicsComboBox.Location = new System.Drawing.Point(178, 31);
       this.nicsComboBox.Name = "nicsComboBox";
       this.nicsComboBox.Size = new System.Drawing.Size(341, 21);
       this.nicsComboBox.TabIndex = 9;
       // 
       // startButton
       // 
-      this.startButton.Location = new System.Drawing.Point(500, 9);
+      this.startButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
+      this.startButton.Location = new System.Drawing.Point(559, 31);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(75, 23);
       this.startButton.TabIndex = 2;
@@ -99,7 +94,8 @@
       // 
       // stopButton
       // 
-      this.stopButton.Location = new System.Drawing.Point(597, 9);
+      this.stopButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
+      this.stopButton.Location = new System.Drawing.Point(655, 31);
       this.stopButton.Name = "stopButton";
       this.stopButton.Size = new System.Drawing.Size(75, 23);
       this.stopButton.TabIndex = 3;
@@ -220,25 +216,77 @@
       this.packetRichTextBox.TabIndex = 6;
       this.packetRichTextBox.Text = "";
       // 
+      // pigSnifferMenuStrip
+      // 
+      this.pigSnifferMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.filtersToolStripMenuItem,
+            this.helpToolStripMenuItem});
+      this.pigSnifferMenuStrip.Location = new System.Drawing.Point(0, 0);
+      this.pigSnifferMenuStrip.Name = "pigSnifferMenuStrip";
+      this.pigSnifferMenuStrip.Size = new System.Drawing.Size(807, 24);
+      this.pigSnifferMenuStrip.TabIndex = 12;
+      this.pigSnifferMenuStrip.Text = "pigSnifferMenuStrip";
+      // 
+      // fileToolStripMenuItem
+      // 
+      this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+      this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+      this.fileToolStripMenuItem.Text = "&File";
+      // 
+      // editToolStripMenuItem
+      // 
+      this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+      this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+      this.editToolStripMenuItem.Text = "&Edit";
+      // 
+      // filtersToolStripMenuItem
+      // 
+      this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
+      this.filtersToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+      this.filtersToolStripMenuItem.Text = "Filte&rs";
+      // 
+      // helpToolStripMenuItem
+      // 
+      this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+      this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+      this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
+      this.helpToolStripMenuItem.Text = "&Help";
+      // 
+      // aboutToolStripMenuItem
+      // 
+      this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+      this.aboutToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+      this.aboutToolStripMenuItem.Text = "&About PigSniffer";
+      this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+      // 
       // PigSnifferForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(807, 614);
+      this.Controls.Add(this.stopButton);
+      this.Controls.Add(this.startButton);
+      this.Controls.Add(this.nicsComboBox);
+      this.Controls.Add(nicsLabel);
       this.Controls.Add(bottomSplitContainer);
-      this.Controls.Add(pigSnifferTopPanel);
+      this.Controls.Add(this.pigSnifferMenuStrip);
+      this.MainMenuStrip = this.pigSnifferMenuStrip;
       this.Name = "PigSnifferForm";
       this.Text = "PigSniffer";
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.pigSnifferForm_FormClosing);
-      pigSnifferTopPanel.ResumeLayout(false);
-      pigSnifferTopPanel.PerformLayout();
       bottomSplitContainer.Panel1.ResumeLayout(false);
       bottomSplitContainer.Panel2.ResumeLayout(false);
       bottomSplitContainer.ResumeLayout(false);
       topSplitContainer.Panel1.ResumeLayout(false);
       topSplitContainer.Panel2.ResumeLayout(false);
       topSplitContainer.ResumeLayout(false);
+      this.pigSnifferMenuStrip.ResumeLayout(false);
+      this.pigSnifferMenuStrip.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -256,5 +304,11 @@
     private System.Windows.Forms.TreeView packetTreeView;
     private System.Windows.Forms.RichTextBox packetRichTextBox;
     private System.Windows.Forms.ComboBox nicsComboBox;
+    private System.Windows.Forms.MenuStrip pigSnifferMenuStrip;
+    private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem filtersToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
   }
 }

@@ -244,6 +244,15 @@ namespace PigSniffer.Forms
       packetRichTextBox.Text = dataStringBuilder.ToString();
     }
 
+
+    private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      var aboutForm = new AboutForm();
+
+      aboutForm.ShowDialog();
+      aboutForm.Dispose();
+    }
+    
     #endregion
 
 
