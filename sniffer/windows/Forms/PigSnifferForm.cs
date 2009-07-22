@@ -50,6 +50,10 @@ namespace PigSniffer.Forms
     /// Timer for ListView update
     /// </summary>
     private readonly Timer updatePacketsListViewTimer;
+    /// <summary>
+    /// packets filters
+    /// </summary>
+    private Filters filters = new Filters();
 
 
     public PigSnifferForm()
@@ -159,6 +163,7 @@ namespace PigSniffer.Forms
 
       startButton.Enabled = false;
       stopButton.Enabled = true;
+      packetTreeView.Focus();
     }
 
 
@@ -245,6 +250,22 @@ namespace PigSniffer.Forms
     }
 
 
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      Close();
+    }
+
+
+    private void filtersToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      var filtersForm = new FiltersForm(filters);
+
+      filtersForm.ShowDialog();
+      filters = filtersForm.GetFilters();
+      filtersForm.Dispose();
+    }
+
+    
     private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
     {
       var aboutForm = new AboutForm();
