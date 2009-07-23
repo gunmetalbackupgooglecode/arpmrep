@@ -33,7 +33,7 @@
       System.Windows.Forms.Label destIPsLabel;
       System.Windows.Forms.Label destPortsLabel;
       this.srcPortsTextBox = new System.Windows.Forms.TextBox();
-      this.srsIPsTextBox = new System.Windows.Forms.TextBox();
+      this.srcIPsTextBox = new System.Windows.Forms.TextBox();
       this.destIPsTextBox = new System.Windows.Forms.TextBox();
       this.destPortsTextBox = new System.Windows.Forms.TextBox();
       this.OKButton = new System.Windows.Forms.Button();
@@ -47,57 +47,29 @@
       // srcPortsLabel
       // 
       srcPortsLabel.AutoSize = true;
-      srcPortsLabel.Location = new System.Drawing.Point(41, 41);
+      srcPortsLabel.Location = new System.Drawing.Point(40, 41);
       srcPortsLabel.Name = "srcPortsLabel";
-      srcPortsLabel.Size = new System.Drawing.Size(70, 13);
+      srcPortsLabel.Size = new System.Drawing.Size(71, 13);
       srcPortsLabel.TabIndex = 0;
-      srcPortsLabel.Text = "Sourse Ports:";
-      // 
-      // srcPortsTextBox
-      // 
-      this.srcPortsTextBox.Location = new System.Drawing.Point(117, 38);
-      this.srcPortsTextBox.Name = "srcPortsTextBox";
-      this.srcPortsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcPortsTextBox.TabIndex = 1;
+      srcPortsLabel.Text = "Source Ports:";
       // 
       // srcIPsLabel
       // 
       srcIPsLabel.AutoSize = true;
-      srcIPsLabel.Location = new System.Drawing.Point(50, 82);
+      srcIPsLabel.Location = new System.Drawing.Point(49, 82);
       srcIPsLabel.Name = "srcIPsLabel";
-      srcIPsLabel.Size = new System.Drawing.Size(61, 13);
+      srcIPsLabel.Size = new System.Drawing.Size(62, 13);
       srcIPsLabel.TabIndex = 2;
-      srcIPsLabel.Text = "Sourse IPs:";
-      // 
-      // srsIPsTextBox
-      // 
-      this.srsIPsTextBox.Location = new System.Drawing.Point(117, 79);
-      this.srsIPsTextBox.Name = "srsIPsTextBox";
-      this.srsIPsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srsIPsTextBox.TabIndex = 3;
-      // 
-      // destIPsTextBox
-      // 
-      this.destIPsTextBox.Location = new System.Drawing.Point(117, 164);
-      this.destIPsTextBox.Name = "destIPsTextBox";
-      this.destIPsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destIPsTextBox.TabIndex = 7;
+      srcIPsLabel.Text = "Source IPs:";
       // 
       // destIPsLabel
       // 
       destIPsLabel.AutoSize = true;
-      destIPsLabel.Location = new System.Drawing.Point(50, 167);
+      destIPsLabel.Location = new System.Drawing.Point(30, 167);
       destIPsLabel.Name = "destIPsLabel";
-      destIPsLabel.Size = new System.Drawing.Size(61, 13);
+      destIPsLabel.Size = new System.Drawing.Size(81, 13);
       destIPsLabel.TabIndex = 6;
-      destIPsLabel.Text = "Sourse IPs:";
-      // 
-      // destPortsTextBox
-      // 
-      this.destPortsTextBox.Location = new System.Drawing.Point(117, 123);
-      this.destPortsTextBox.Name = "destPortsTextBox";
-      this.destPortsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destPortsTextBox.TabIndex = 5;
+      destIPsLabel.Text = "Destination IPs:";
       // 
       // destPortsLabel
       // 
@@ -107,6 +79,34 @@
       destPortsLabel.Size = new System.Drawing.Size(90, 13);
       destPortsLabel.TabIndex = 4;
       destPortsLabel.Text = "Destination Ports:";
+      // 
+      // srcPortsTextBox
+      // 
+      this.srcPortsTextBox.Location = new System.Drawing.Point(117, 38);
+      this.srcPortsTextBox.Name = "srcPortsTextBox";
+      this.srcPortsTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcPortsTextBox.TabIndex = 1;
+      // 
+      // srcIPsTextBox
+      // 
+      this.srcIPsTextBox.Location = new System.Drawing.Point(117, 79);
+      this.srcIPsTextBox.Name = "srcIPsTextBox";
+      this.srcIPsTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcIPsTextBox.TabIndex = 3;
+      // 
+      // destIPsTextBox
+      // 
+      this.destIPsTextBox.Location = new System.Drawing.Point(117, 164);
+      this.destIPsTextBox.Name = "destIPsTextBox";
+      this.destIPsTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destIPsTextBox.TabIndex = 7;
+      // 
+      // destPortsTextBox
+      // 
+      this.destPortsTextBox.Location = new System.Drawing.Point(117, 123);
+      this.destPortsTextBox.Name = "destPortsTextBox";
+      this.destPortsTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destPortsTextBox.TabIndex = 5;
       // 
       // OKButton
       // 
@@ -120,6 +120,7 @@
       // 
       // CancelButton
       // 
+      this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.CancelButton.Location = new System.Drawing.Point(279, 291);
       this.CancelButton.Name = "CancelButton";
       this.CancelButton.Size = new System.Drawing.Size(75, 23);
@@ -130,9 +131,9 @@
       // 
       // FiltersForm
       // 
+      this.AcceptButton = this.OKButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.CancelButton = this.CancelButton;
       this.ClientSize = new System.Drawing.Size(516, 346);
       this.Controls.Add(this.CancelButton);
       this.Controls.Add(this.OKButton);
@@ -140,7 +141,7 @@
       this.Controls.Add(destIPsLabel);
       this.Controls.Add(this.destPortsTextBox);
       this.Controls.Add(destPortsLabel);
-      this.Controls.Add(this.srsIPsTextBox);
+      this.Controls.Add(this.srcIPsTextBox);
       this.Controls.Add(srcIPsLabel);
       this.Controls.Add(this.srcPortsTextBox);
       this.Controls.Add(srcPortsLabel);
@@ -158,7 +159,7 @@
     #endregion
 
     private System.Windows.Forms.TextBox srcPortsTextBox;
-    private System.Windows.Forms.TextBox srsIPsTextBox;
+    private System.Windows.Forms.TextBox srcIPsTextBox;
     private System.Windows.Forms.TextBox destIPsTextBox;
     private System.Windows.Forms.TextBox destPortsTextBox;
     private System.Windows.Forms.Button OKButton;

@@ -50,6 +50,7 @@
       this.setToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       nicsLabel = new System.Windows.Forms.Label();
       bottomSplitContainer = new System.Windows.Forms.SplitContainer();
       topSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -247,6 +248,7 @@
       // filtersToolStripMenuItem
       // 
       this.filtersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearToolStripMenuItem,
             this.setToolStripMenuItem});
       this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
       this.filtersToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -255,7 +257,7 @@
       // setToolStripMenuItem
       // 
       this.setToolStripMenuItem.Name = "setToolStripMenuItem";
-      this.setToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.setToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
       this.setToolStripMenuItem.Text = "Filte&rs";
       this.setToolStripMenuItem.Click += new System.EventHandler(this.filtersToolStripMenuItem_Click);
       // 
@@ -274,6 +276,13 @@
       this.aboutToolStripMenuItem.Text = "&About PigSniffer";
       this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
       // 
+      // clearToolStripMenuItem
+      // 
+      this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+      this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.clearToolStripMenuItem.Text = "&Clear";
+      this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+      // 
       // PigSnifferForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -285,6 +294,7 @@
       this.Controls.Add(nicsLabel);
       this.Controls.Add(bottomSplitContainer);
       this.Controls.Add(this.pigSnifferMenuStrip);
+      this.DoubleBuffered = true;
       this.MainMenuStrip = this.pigSnifferMenuStrip;
       this.Name = "PigSnifferForm";
       this.Text = "PigSniffer";
@@ -323,5 +333,6 @@
     private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem setToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
   }
 }
