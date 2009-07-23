@@ -157,10 +157,24 @@ namespace PigSniffer.Packets
       headerValues.Add(string.Format("Protocol: 0x{0:X} ({1})",
                                      protocol, GetProtocolString()));
       headerValues.Add(string.Format("Checksum: 0x{0:X}", checksum));
-      headerValues.Add(string.Format("Source IP address: 0x{0:X} ({1})",
-                                     srcIPAddress, GetSrcIPAddressString()));
-      headerValues.Add(string.Format("Destination IP address: 0x{0:X} ({1})",
-                                     destIPAddress, GetDestIPAddressString()));
+
+      string srcIPAddressString = GetSrcIPAddressString();
+      string srcHostName = Dns.GetHostEntry(srcIPAddressString).HostName;
+      if (srcHostName.Equals(srcIPAddressString))
+      {
+        srcHostName = "not resolved";
+      }
+      headerValues.Add(string.Format("Source IP address: 0x{0:X} ({1}, {2})",
+                                     srcIPAddress, srcIPAddressString, srcHostName));
+
+      string destIPAddressString = GetDestIPAddressString();
+      string destHostName = Dns.GetHostEntry(destIPAddressString).HostName;
+      if (destHostName.Equals(destIPAddressString))
+      {
+        destHostName = "not resolved";
+      }
+      headerValues.Add(string.Format("Destination IP address: 0x{0:X} ({1}, {2})",
+                                     destIPAddress, destIPAddressString, destHostName));
 
       // TODO: parse options
 

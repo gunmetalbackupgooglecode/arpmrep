@@ -256,12 +256,28 @@ namespace PigSniffer.Forms
     }
 
 
+    private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      lock (packets)
+      {
+        packetNumber = 0;
+        packets.Clear();
+        packetsListView.Items.Clear();
+        updatesForPacketsListView.Clear();
+        packetTreeView.Nodes.Clear();
+        packetRichTextBox.Clear();
+      }
+    }
+
+    
     private void filtersToolStripMenuItem_Click(object sender, EventArgs e)
     {
       var filtersForm = new FiltersForm(filters);
 
-      filtersForm.ShowDialog();
-      filters = filtersForm.GetFilters();
+      if (DialogResult.OK == filtersForm.ShowDialog())
+      {
+        filters = filtersForm.GetFilters();
+      }
       filtersForm.Dispose();
     }
 
@@ -312,26 +328,46 @@ namespace PigSniffer.Forms
 
     private void ParseData(byte[] data, int count)
     {
-      var ethernetHeader = new IPPacket(data, count);
+      var ethernetPacket = new IPPacket(data, count);
 
-      packets.Add(ethernetHeader);
-      ++ packetNumber;
-
-      var item = new ListViewItem(new[] { packetNumber.ToString(),
-                                          ethernetHeader.GetSrcIPAddressString(), ethernetHeader.GetSrcPortString(),
-                                          ethernetHeader.GetDestIPAddressString(), ethernetHeader.GetDestPortString(),
-                                          ethernetHeader.GetProtocolString()});
-      
-      lock (updatesForPacketsListView)
+      if (IsPacketAllowed(ethernetPacket))
       {
-        updatesForPacketsListView.Add(item);
+        lock (packets)
+        {
+          packets.Add(ethernetPacket);
+          ++packetNumber;
+
+          var item = new ListViewItem(new[]
+                                      {
+                                        packetNumber.ToString(),
+                                        ethernetPacket.GetSrcIPAddressString(), ethernetPacket.GetSrcPortString(),
+                                        ethernetPacket.GetDestIPAddressString(), ethernetPacket.GetDestPortString(),
+                                        ethernetPacket.GetProtocolString()
+                                      });
+
+          updatesForPacketsListView.Add(item);
+        }
       }
+    }
+
+
+    /// <summary>
+    /// Checks if the packet satisfy filters' limits
+    /// </summary>
+    /// <param name="packet"></param>
+    /// <returns>true if satisfy</returns>
+    private bool IsPacketAllowed(IPPacket packet)
+    {
+      return filters.IsSrcPortAllowed(packet.GetSrcPortString()) &&
+             filters.IsSrcIPAllowed(packet.GetSrcIPAddressString()) &&
+             filters.IsDestPortAllowed(packet.GetDestPortString()) &&
+             filters.IsDestIPAllowed(packet.GetDestIPAddressString());
     }
 
 
     private void UpdatePacketsListViewCallback(object stateInfo)
     {
-      lock (updatesForPacketsListView)
+      lock (packets)
       {
         if (InvokeRequired)
         {
