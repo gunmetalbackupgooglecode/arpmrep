@@ -28,89 +28,232 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.Label srcPortsLabel;
-      System.Windows.Forms.Label srcIPsLabel;
-      System.Windows.Forms.Label destIPsLabel;
-      System.Windows.Forms.Label destPortsLabel;
-      this.srcPortsTextBox = new System.Windows.Forms.TextBox();
-      this.srcIPsTextBox = new System.Windows.Forms.TextBox();
-      this.destIPsTextBox = new System.Windows.Forms.TextBox();
-      this.destPortsTextBox = new System.Windows.Forms.TextBox();
+      System.Windows.Forms.GroupBox srcPortsGroupBox;
+      System.Windows.Forms.Label srcPortsExcludeLabel;
+      System.Windows.Forms.Label srcPortsIncludeLabel;
+      System.Windows.Forms.GroupBox srcIPsGroupBox;
+      System.Windows.Forms.Label srcIPsExcludeLabel;
+      System.Windows.Forms.Label srcIPsIncludeLabel;
+      System.Windows.Forms.GroupBox destPortsGroupBox;
+      System.Windows.Forms.Label destPortsExcludeLabel;
+      System.Windows.Forms.Label destPortsIncludeLabel;
+      System.Windows.Forms.GroupBox destIPsGroupBox;
+      System.Windows.Forms.Label destIPsExcludeLabel;
+      System.Windows.Forms.Label destIPsIncludeLabel;
+      this.srcPortsExcludeTextBox = new System.Windows.Forms.TextBox();
+      this.srcPortsIncludeTextBox = new System.Windows.Forms.TextBox();
+      this.srcIPsExcludeTextBox = new System.Windows.Forms.TextBox();
+      this.srcIPsIncludeTextBox = new System.Windows.Forms.TextBox();
+      this.destPortsExcludeTextBox = new System.Windows.Forms.TextBox();
+      this.destPortsIncludeTextBox = new System.Windows.Forms.TextBox();
+      this.destIPsExcludeTextBox = new System.Windows.Forms.TextBox();
+      this.destIPsIncludeTextBox = new System.Windows.Forms.TextBox();
       this.OKButton = new System.Windows.Forms.Button();
       this.CancelButton = new System.Windows.Forms.Button();
-      srcPortsLabel = new System.Windows.Forms.Label();
-      srcIPsLabel = new System.Windows.Forms.Label();
-      destIPsLabel = new System.Windows.Forms.Label();
-      destPortsLabel = new System.Windows.Forms.Label();
+      this.protocolsListBox = new System.Windows.Forms.ListBox();
+      this.protocolsGroupBox = new System.Windows.Forms.GroupBox();
+      srcPortsGroupBox = new System.Windows.Forms.GroupBox();
+      srcPortsExcludeLabel = new System.Windows.Forms.Label();
+      srcPortsIncludeLabel = new System.Windows.Forms.Label();
+      srcIPsGroupBox = new System.Windows.Forms.GroupBox();
+      srcIPsExcludeLabel = new System.Windows.Forms.Label();
+      srcIPsIncludeLabel = new System.Windows.Forms.Label();
+      destPortsGroupBox = new System.Windows.Forms.GroupBox();
+      destPortsExcludeLabel = new System.Windows.Forms.Label();
+      destPortsIncludeLabel = new System.Windows.Forms.Label();
+      destIPsGroupBox = new System.Windows.Forms.GroupBox();
+      destIPsExcludeLabel = new System.Windows.Forms.Label();
+      destIPsIncludeLabel = new System.Windows.Forms.Label();
+      srcPortsGroupBox.SuspendLayout();
+      srcIPsGroupBox.SuspendLayout();
+      destPortsGroupBox.SuspendLayout();
+      destIPsGroupBox.SuspendLayout();
+      this.protocolsGroupBox.SuspendLayout();
       this.SuspendLayout();
       // 
-      // srcPortsLabel
+      // srcPortsGroupBox
       // 
-      srcPortsLabel.AutoSize = true;
-      srcPortsLabel.Location = new System.Drawing.Point(40, 41);
-      srcPortsLabel.Name = "srcPortsLabel";
-      srcPortsLabel.Size = new System.Drawing.Size(71, 13);
-      srcPortsLabel.TabIndex = 0;
-      srcPortsLabel.Text = "Source Ports:";
+      srcPortsGroupBox.Controls.Add(this.srcPortsExcludeTextBox);
+      srcPortsGroupBox.Controls.Add(srcPortsExcludeLabel);
+      srcPortsGroupBox.Controls.Add(srcPortsIncludeLabel);
+      srcPortsGroupBox.Controls.Add(this.srcPortsIncludeTextBox);
+      srcPortsGroupBox.Location = new System.Drawing.Point(376, 12);
+      srcPortsGroupBox.Name = "srcPortsGroupBox";
+      srcPortsGroupBox.Size = new System.Drawing.Size(348, 81);
+      srcPortsGroupBox.TabIndex = 10;
+      srcPortsGroupBox.TabStop = false;
+      srcPortsGroupBox.Text = "Source port";
       // 
-      // srcIPsLabel
+      // srcPortsExcludeTextBox
       // 
-      srcIPsLabel.AutoSize = true;
-      srcIPsLabel.Location = new System.Drawing.Point(49, 82);
-      srcIPsLabel.Name = "srcIPsLabel";
-      srcIPsLabel.Size = new System.Drawing.Size(62, 13);
-      srcIPsLabel.TabIndex = 2;
-      srcIPsLabel.Text = "Source IPs:";
+      this.srcPortsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
+      this.srcPortsExcludeTextBox.Name = "srcPortsExcludeTextBox";
+      this.srcPortsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcPortsExcludeTextBox.TabIndex = 4;
       // 
-      // destIPsLabel
+      // srcPortsExcludeLabel
       // 
-      destIPsLabel.AutoSize = true;
-      destIPsLabel.Location = new System.Drawing.Point(30, 167);
-      destIPsLabel.Name = "destIPsLabel";
-      destIPsLabel.Size = new System.Drawing.Size(81, 13);
-      destIPsLabel.TabIndex = 6;
-      destIPsLabel.Text = "Destination IPs:";
+      srcPortsExcludeLabel.AutoSize = true;
+      srcPortsExcludeLabel.Location = new System.Drawing.Point(13, 48);
+      srcPortsExcludeLabel.Name = "srcPortsExcludeLabel";
+      srcPortsExcludeLabel.Size = new System.Drawing.Size(48, 13);
+      srcPortsExcludeLabel.TabIndex = 3;
+      srcPortsExcludeLabel.Text = "Exclude:";
       // 
-      // destPortsLabel
+      // srcPortsIncludeLabel
       // 
-      destPortsLabel.AutoSize = true;
-      destPortsLabel.Location = new System.Drawing.Point(21, 126);
-      destPortsLabel.Name = "destPortsLabel";
-      destPortsLabel.Size = new System.Drawing.Size(90, 13);
-      destPortsLabel.TabIndex = 4;
-      destPortsLabel.Text = "Destination Ports:";
+      srcPortsIncludeLabel.AutoSize = true;
+      srcPortsIncludeLabel.Location = new System.Drawing.Point(16, 22);
+      srcPortsIncludeLabel.Name = "srcPortsIncludeLabel";
+      srcPortsIncludeLabel.Size = new System.Drawing.Size(45, 13);
+      srcPortsIncludeLabel.TabIndex = 2;
+      srcPortsIncludeLabel.Text = "Include:";
       // 
-      // srcPortsTextBox
+      // srcPortsIncludeTextBox
       // 
-      this.srcPortsTextBox.Location = new System.Drawing.Point(117, 38);
-      this.srcPortsTextBox.Name = "srcPortsTextBox";
-      this.srcPortsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcPortsTextBox.TabIndex = 1;
+      this.srcPortsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
+      this.srcPortsIncludeTextBox.Name = "srcPortsIncludeTextBox";
+      this.srcPortsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcPortsIncludeTextBox.TabIndex = 1;
       // 
-      // srcIPsTextBox
+      // srcIPsGroupBox
       // 
-      this.srcIPsTextBox.Location = new System.Drawing.Point(117, 79);
-      this.srcIPsTextBox.Name = "srcIPsTextBox";
-      this.srcIPsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcIPsTextBox.TabIndex = 3;
+      srcIPsGroupBox.Controls.Add(this.srcIPsExcludeTextBox);
+      srcIPsGroupBox.Controls.Add(srcIPsExcludeLabel);
+      srcIPsGroupBox.Controls.Add(srcIPsIncludeLabel);
+      srcIPsGroupBox.Controls.Add(this.srcIPsIncludeTextBox);
+      srcIPsGroupBox.Location = new System.Drawing.Point(13, 12);
+      srcIPsGroupBox.Name = "srcIPsGroupBox";
+      srcIPsGroupBox.Size = new System.Drawing.Size(348, 81);
+      srcIPsGroupBox.TabIndex = 11;
+      srcIPsGroupBox.TabStop = false;
+      srcIPsGroupBox.Text = "Source IP";
       // 
-      // destIPsTextBox
+      // srcIPsExcludeTextBox
       // 
-      this.destIPsTextBox.Location = new System.Drawing.Point(117, 164);
-      this.destIPsTextBox.Name = "destIPsTextBox";
-      this.destIPsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destIPsTextBox.TabIndex = 7;
+      this.srcIPsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
+      this.srcIPsExcludeTextBox.Name = "srcIPsExcludeTextBox";
+      this.srcIPsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcIPsExcludeTextBox.TabIndex = 4;
       // 
-      // destPortsTextBox
+      // srcIPsExcludeLabel
       // 
-      this.destPortsTextBox.Location = new System.Drawing.Point(117, 123);
-      this.destPortsTextBox.Name = "destPortsTextBox";
-      this.destPortsTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destPortsTextBox.TabIndex = 5;
+      srcIPsExcludeLabel.AutoSize = true;
+      srcIPsExcludeLabel.Location = new System.Drawing.Point(13, 48);
+      srcIPsExcludeLabel.Name = "srcIPsExcludeLabel";
+      srcIPsExcludeLabel.Size = new System.Drawing.Size(48, 13);
+      srcIPsExcludeLabel.TabIndex = 3;
+      srcIPsExcludeLabel.Text = "Exclude:";
+      // 
+      // srcIPsIncludeLabel
+      // 
+      srcIPsIncludeLabel.AutoSize = true;
+      srcIPsIncludeLabel.Location = new System.Drawing.Point(16, 22);
+      srcIPsIncludeLabel.Name = "srcIPsIncludeLabel";
+      srcIPsIncludeLabel.Size = new System.Drawing.Size(45, 13);
+      srcIPsIncludeLabel.TabIndex = 2;
+      srcIPsIncludeLabel.Text = "Include:";
+      // 
+      // srcIPsIncludeTextBox
+      // 
+      this.srcIPsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
+      this.srcIPsIncludeTextBox.Name = "srcIPsIncludeTextBox";
+      this.srcIPsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.srcIPsIncludeTextBox.TabIndex = 3;
+      // 
+      // destPortsGroupBox
+      // 
+      destPortsGroupBox.Controls.Add(this.destPortsExcludeTextBox);
+      destPortsGroupBox.Controls.Add(destPortsExcludeLabel);
+      destPortsGroupBox.Controls.Add(destPortsIncludeLabel);
+      destPortsGroupBox.Controls.Add(this.destPortsIncludeTextBox);
+      destPortsGroupBox.Location = new System.Drawing.Point(376, 113);
+      destPortsGroupBox.Name = "destPortsGroupBox";
+      destPortsGroupBox.Size = new System.Drawing.Size(348, 81);
+      destPortsGroupBox.TabIndex = 12;
+      destPortsGroupBox.TabStop = false;
+      destPortsGroupBox.Text = "Destination port";
+      // 
+      // destPortsExcludeTextBox
+      // 
+      this.destPortsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
+      this.destPortsExcludeTextBox.Name = "destPortsExcludeTextBox";
+      this.destPortsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destPortsExcludeTextBox.TabIndex = 4;
+      // 
+      // destPortsExcludeLabel
+      // 
+      destPortsExcludeLabel.AutoSize = true;
+      destPortsExcludeLabel.Location = new System.Drawing.Point(13, 48);
+      destPortsExcludeLabel.Name = "destPortsExcludeLabel";
+      destPortsExcludeLabel.Size = new System.Drawing.Size(48, 13);
+      destPortsExcludeLabel.TabIndex = 3;
+      destPortsExcludeLabel.Text = "Exclude:";
+      // 
+      // destPortsIncludeLabel
+      // 
+      destPortsIncludeLabel.AutoSize = true;
+      destPortsIncludeLabel.Location = new System.Drawing.Point(16, 22);
+      destPortsIncludeLabel.Name = "destPortsIncludeLabel";
+      destPortsIncludeLabel.Size = new System.Drawing.Size(45, 13);
+      destPortsIncludeLabel.TabIndex = 2;
+      destPortsIncludeLabel.Text = "Include:";
+      // 
+      // destPortsIncludeTextBox
+      // 
+      this.destPortsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
+      this.destPortsIncludeTextBox.Name = "destPortsIncludeTextBox";
+      this.destPortsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destPortsIncludeTextBox.TabIndex = 5;
+      // 
+      // destIPsGroupBox
+      // 
+      destIPsGroupBox.Controls.Add(this.destIPsExcludeTextBox);
+      destIPsGroupBox.Controls.Add(destIPsExcludeLabel);
+      destIPsGroupBox.Controls.Add(destIPsIncludeLabel);
+      destIPsGroupBox.Controls.Add(this.destIPsIncludeTextBox);
+      destIPsGroupBox.Location = new System.Drawing.Point(13, 113);
+      destIPsGroupBox.Name = "destIPsGroupBox";
+      destIPsGroupBox.Size = new System.Drawing.Size(348, 81);
+      destIPsGroupBox.TabIndex = 13;
+      destIPsGroupBox.TabStop = false;
+      destIPsGroupBox.Text = "Destination IP";
+      // 
+      // destIPsExcludeTextBox
+      // 
+      this.destIPsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
+      this.destIPsExcludeTextBox.Name = "destIPsExcludeTextBox";
+      this.destIPsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destIPsExcludeTextBox.TabIndex = 4;
+      // 
+      // destIPsExcludeLabel
+      // 
+      destIPsExcludeLabel.AutoSize = true;
+      destIPsExcludeLabel.Location = new System.Drawing.Point(13, 48);
+      destIPsExcludeLabel.Name = "destIPsExcludeLabel";
+      destIPsExcludeLabel.Size = new System.Drawing.Size(48, 13);
+      destIPsExcludeLabel.TabIndex = 3;
+      destIPsExcludeLabel.Text = "Exclude:";
+      // 
+      // destIPsIncludeLabel
+      // 
+      destIPsIncludeLabel.AutoSize = true;
+      destIPsIncludeLabel.Location = new System.Drawing.Point(16, 22);
+      destIPsIncludeLabel.Name = "destIPsIncludeLabel";
+      destIPsIncludeLabel.Size = new System.Drawing.Size(45, 13);
+      destIPsIncludeLabel.TabIndex = 2;
+      destIPsIncludeLabel.Text = "Include:";
+      // 
+      // destIPsIncludeTextBox
+      // 
+      this.destIPsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
+      this.destIPsIncludeTextBox.Name = "destIPsIncludeTextBox";
+      this.destIPsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
+      this.destIPsIncludeTextBox.TabIndex = 7;
       // 
       // OKButton
       // 
-      this.OKButton.Location = new System.Drawing.Point(163, 291);
+      this.OKButton.Location = new System.Drawing.Point(273, 383);
       this.OKButton.Name = "OKButton";
       this.OKButton.Size = new System.Drawing.Size(75, 23);
       this.OKButton.TabIndex = 8;
@@ -121,7 +264,7 @@
       // CancelButton
       // 
       this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.CancelButton.Location = new System.Drawing.Point(279, 291);
+      this.CancelButton.Location = new System.Drawing.Point(389, 383);
       this.CancelButton.Name = "CancelButton";
       this.CancelButton.Size = new System.Drawing.Size(75, 23);
       this.CancelButton.TabIndex = 9;
@@ -129,40 +272,70 @@
       this.CancelButton.UseVisualStyleBackColor = true;
       this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
       // 
+      // protocolsListBox
+      // 
+      this.protocolsListBox.FormattingEnabled = true;
+      this.protocolsListBox.Location = new System.Drawing.Point(15, 19);
+      this.protocolsListBox.Name = "protocolsListBox";
+      this.protocolsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+      this.protocolsListBox.Size = new System.Drawing.Size(263, 121);
+      this.protocolsListBox.TabIndex = 14;
+      // 
+      // protocolsGroupBox
+      // 
+      this.protocolsGroupBox.Controls.Add(this.protocolsListBox);
+      this.protocolsGroupBox.Location = new System.Drawing.Point(222, 213);
+      this.protocolsGroupBox.Name = "protocolsGroupBox";
+      this.protocolsGroupBox.Size = new System.Drawing.Size(292, 152);
+      this.protocolsGroupBox.TabIndex = 15;
+      this.protocolsGroupBox.TabStop = false;
+      this.protocolsGroupBox.Text = "Protocol";
+      // 
       // FiltersForm
       // 
       this.AcceptButton = this.OKButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(516, 346);
+      this.ClientSize = new System.Drawing.Size(736, 424);
+      this.Controls.Add(this.protocolsGroupBox);
+      this.Controls.Add(destIPsGroupBox);
+      this.Controls.Add(destPortsGroupBox);
+      this.Controls.Add(srcIPsGroupBox);
+      this.Controls.Add(srcPortsGroupBox);
       this.Controls.Add(this.CancelButton);
       this.Controls.Add(this.OKButton);
-      this.Controls.Add(this.destIPsTextBox);
-      this.Controls.Add(destIPsLabel);
-      this.Controls.Add(this.destPortsTextBox);
-      this.Controls.Add(destPortsLabel);
-      this.Controls.Add(this.srcIPsTextBox);
-      this.Controls.Add(srcIPsLabel);
-      this.Controls.Add(this.srcPortsTextBox);
-      this.Controls.Add(srcPortsLabel);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
       this.MinimizeBox = false;
       this.Name = "FiltersForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Filters";
+      srcPortsGroupBox.ResumeLayout(false);
+      srcPortsGroupBox.PerformLayout();
+      srcIPsGroupBox.ResumeLayout(false);
+      srcIPsGroupBox.PerformLayout();
+      destPortsGroupBox.ResumeLayout(false);
+      destPortsGroupBox.PerformLayout();
+      destIPsGroupBox.ResumeLayout(false);
+      destIPsGroupBox.PerformLayout();
+      this.protocolsGroupBox.ResumeLayout(false);
       this.ResumeLayout(false);
-      this.PerformLayout();
 
     }
 
     #endregion
 
-    private System.Windows.Forms.TextBox srcPortsTextBox;
-    private System.Windows.Forms.TextBox srcIPsTextBox;
-    private System.Windows.Forms.TextBox destIPsTextBox;
-    private System.Windows.Forms.TextBox destPortsTextBox;
+    private System.Windows.Forms.TextBox srcPortsIncludeTextBox;
+    private System.Windows.Forms.TextBox srcIPsIncludeTextBox;
+    private System.Windows.Forms.TextBox destIPsIncludeTextBox;
+    private System.Windows.Forms.TextBox destPortsIncludeTextBox;
     private System.Windows.Forms.Button OKButton;
     private new System.Windows.Forms.Button CancelButton;
+    private System.Windows.Forms.TextBox srcPortsExcludeTextBox;
+    private System.Windows.Forms.TextBox srcIPsExcludeTextBox;
+    private System.Windows.Forms.TextBox destPortsExcludeTextBox;
+    private System.Windows.Forms.TextBox destIPsExcludeTextBox;
+    private System.Windows.Forms.ListBox protocolsListBox;
+    private System.Windows.Forms.GroupBox protocolsGroupBox;
   }
 }
