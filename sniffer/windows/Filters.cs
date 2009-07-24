@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using PigSniffer.Packets;
 
 
 namespace PigSniffer
@@ -38,102 +39,52 @@ namespace PigSniffer
   /// </summary>
   public class Filters
   {
-    private readonly List<Range<int>> srcPorts = new List<Range<int>>();
-    private readonly List<Range<IPAddress>> srcIPs = new List<Range<IPAddress>>();
-    private readonly List<Range<int>> destPorts = new List<Range<int>>();
-    private readonly List<Range<IPAddress>> destIPs = new List<Range<IPAddress>>();
+    private readonly List<Range<IPAddress>> srcIPsInclude = new List<Range<IPAddress>>();
+    private readonly List<Range<IPAddress>> srcIPsExclude = new List<Range<IPAddress>>();
+    private readonly List<Range<int>> srcPortsInclude = new List<Range<int>>();
+    private readonly List<Range<int>> srcPortsExclude = new List<Range<int>>();
+    private readonly List<Range<IPAddress>> destIPsInclude = new List<Range<IPAddress>>();
+    private readonly List<Range<IPAddress>> destIPsExclude = new List<Range<IPAddress>>();
+    private readonly List<Range<int>> destPortsInclude = new List<Range<int>>();
+    private readonly List<Range<int>> destPortsExclude = new List<Range<int>>();
+    private readonly List<Protocol> protocols = new List<Protocol>();
 
 
-    /// <summary>
-    /// Returns string representation of source ports values
-    /// </summary>
-    /// <returns>souce ports as string</returns>
-    public string GetSrcPortsString()
+    public Filters()
     {
-      return RangeCollectionToString(srcPorts);
+      foreach (int protocol in Enum.GetValues(typeof(Protocol)))
+      {
+        protocols.Add((Protocol)protocol);
+      }
     }
 
 
     /// <summary>
-    /// Parses input string and updates source port filters.
-    /// </summary>
-    /// <param name="srcPortsString">sourse ports as string</param>
-    /// <returns>true if srcPortsString is valid, false otherwise</returns>
-    public bool SetSrcPorts(string srcPortsString)
-    {
-      srcPorts.Clear();
-      if (string.IsNullOrEmpty(srcPortsString))
-      {
-        return true;
-      }
-
-      try
-      {
-        srcPorts.AddRange(ParsePortsString(srcPortsString));
-      }
-      catch (ArgumentException)
-      {
-        return false;
-      }
-      return true;
-    }
-
-
-    /// <summary>
-    /// Checkes if source port is allowed with filters
-    /// </summary>
-    /// <param name="srcPortString">sourse port as string</param>
-    /// <returns>true if allowed</returns>
-    public bool IsSrcPortAllowed(string srcPortString)
-    {
-      if (0 == srcPorts.Count)
-      {
-        return true;
-      }
-
-      int srcPort;
-      
-      if (!int.TryParse(srcPortString, out srcPort))
-      {
-        return false;
-      }
-      foreach (Range<int> srcPortRange in srcPorts)
-      {
-        if (srcPort >= srcPortRange.First && srcPort <= srcPortRange.Second)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-
-    /// <summary>
-    /// Returns string representation of source IPs values
+    /// Returns string representation of source IPs include values
     /// </summary>
     /// <returns>IPs as string</returns>
-    public string GetSrcIPsString()
+    public string GetSrcIPsIncludeString()
     {
-      return RangeCollectionToString(srcIPs);
+      return RangeCollectionToString(srcIPsInclude);
     }
 
 
     /// <summary>
-    /// Parses input string and updates source IP filters.
+    /// Parses input string and updates source IP include filters.
     /// </summary>
-    /// <param name="srcIPsString">sourse IPs as string</param>
-    /// <returns>true if srcIPsString is valid, false otherwise</returns>
-    public bool SetSrcIPs(string srcIPsString)
+    /// <param name="srcIPsIncludeString">sourse IPs include as string</param>
+    /// <returns>true if srcIPsIncludeString is valid, false otherwise</returns>
+    public bool SetSrcIPsInclude(string srcIPsIncludeString)
     {
-      srcIPs.Clear();
-      if (string.IsNullOrEmpty(srcIPsString))
+      srcIPsInclude.Clear();
+      if (string.IsNullOrEmpty(srcIPsIncludeString))
       {
         return true;
       }
 
       try
       {
-        srcIPs.AddRange(ParseIPsString(srcIPsString));
+        srcIPsInclude.AddRange(ParseIPsString(srcIPsIncludeString));
       }
       catch (ArgumentException)
       {
@@ -144,161 +95,454 @@ namespace PigSniffer
 
 
     /// <summary>
-    /// Checkes if source IP is allowed with filters
+    /// Returns string representation of source IPs exclude values
     /// </summary>
+    /// <returns>IPs as string</returns>
+    public string GetSrcIPsExcludeString()
+    {
+      return RangeCollectionToString(srcIPsExclude);
+    }
+
+
+    /// <summary>
+    /// Parses input string and updates source IP exclude filters.
+    /// </summary>
+    /// <param name="srcIPsExcludeString">sourse IPs exclude as string</param>
+    /// <returns>true if srcIPsExcludeString is valid, false otherwise</returns>
+    public bool SetSrcIPsExclude(string srcIPsExcludeString)
+    {
+      srcIPsExclude.Clear();
+      if (string.IsNullOrEmpty(srcIPsExcludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        srcIPsExclude.AddRange(ParseIPsString(srcIPsExcludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of source ports include values
+    /// </summary>
+    /// <returns>source ports include as string</returns>
+    public string GetSrcPortsIncludeString()
+    {
+      return RangeCollectionToString(srcPortsInclude);
+    }
+
+
+    /// <summary>
+    /// Parses input string and updates source port include filters.
+    /// </summary>
+    /// <param name="srcPortsIncludeString">source ports include as string</param>
+    /// <returns>true if srcPortsIncludeString is valid, false otherwise</returns>
+    public bool SetSrcPortsInclude(string srcPortsIncludeString)
+    {
+      srcPortsInclude.Clear();
+      if (string.IsNullOrEmpty(srcPortsIncludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        srcPortsInclude.AddRange(ParsePortsString(srcPortsIncludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of source ports exclude values
+    /// </summary>
+    /// <returns>source ports exclude as string</returns>
+    public string GetSrcPortsExcludeString()
+    {
+      return RangeCollectionToString(srcPortsExclude);
+    }
+
+
+    /// <summary>
+    /// Parses input string and updates source port exclude filters.
+    /// </summary>
+    /// <param name="srcPortsExcludeString">source ports exclude as string</param>
+    /// <returns>true if srcPortsExcludeString is valid, false otherwise</returns>
+    public bool SetSrcPortsExclude(string srcPortsExcludeString)
+    {
+      srcPortsExclude.Clear();
+      if (string.IsNullOrEmpty(srcPortsExcludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        srcPortsExclude.AddRange(ParsePortsString(srcPortsExcludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of destination IPs include values
+    /// </summary>
+    /// <returns>destination IPs include as string</returns>
+    public string GetDestIPsIncludeString()
+    {
+      return RangeCollectionToString(destIPsInclude);
+    }
+
+
+    /// <summary>
+    /// Parses input string and updates destination IPs include filters.
+    /// </summary>
+    /// <param name="destIPsIncludeString">destination IPs include as string</param>
+    /// <returns>true if destIPsIncludeString is valid, false otherwise</returns>
+    public bool SetDestIPsInclude(string destIPsIncludeString)
+    {
+      destIPsInclude.Clear();
+      if (string.IsNullOrEmpty(destIPsIncludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        destIPsInclude.AddRange(ParseIPsString(destIPsIncludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of destination IPs exclude values
+    /// </summary>
+    /// <returns>destination IPs exclude as string</returns>
+    public string GetDestIPsExcludeString()
+    {
+      return RangeCollectionToString(destIPsExclude);
+    }
+
+
+    /// <summary>
+    /// Parses input string and updates destination IPs exclude filters.
+    /// </summary>
+    /// <param name="destIPsExcludeString">destination IPs exclude as string</param>
+    /// <returns>true if destIPsExcludeString is valid, false otherwise</returns>
+    public bool SetDestIPsExclude(string destIPsExcludeString)
+    {
+      destIPsExclude.Clear();
+      if (string.IsNullOrEmpty(destIPsExcludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        destIPsExclude.AddRange(ParseIPsString(destIPsExcludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of destination ports include values
+    /// </summary>
+    /// <returns>destination ports include as string</returns>
+    public string GetDestPortsIncludeString()
+    {
+      return RangeCollectionToString(destPortsInclude);
+    }
+
+    
+    /// <summary>
+    /// Parses input string and updates destination port include filters.
+    /// </summary>
+    /// <param name="destPortsIncludeString">destination ports include as string</param>
+    /// <returns>true if destPortsIncludeString is valid, false otherwise</returns>
+    public bool SetDestPortsInclude(string destPortsIncludeString)
+    {
+      destPortsInclude.Clear();
+      if (string.IsNullOrEmpty(destPortsIncludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        destPortsInclude.AddRange(ParsePortsString(destPortsIncludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns string representation of destination ports exclude values
+    /// </summary>
+    /// <returns>destination ports exclude as string</returns>
+    public string GetDestPortsExcludeString()
+    {
+      return RangeCollectionToString(destPortsExclude);
+    }
+
+    
+    /// <summary>
+    /// Parses input string and updates destination port exclude filters.
+    /// </summary>
+    /// <param name="destPortsExcludeString">destination ports exclude as string</param>
+    /// <returns>true if destPortsExcludeString is valid, false otherwise</returns>
+    public bool SetDestPortsExclude(string destPortsExcludeString)
+    {
+      destPortsExclude.Clear();
+      if (string.IsNullOrEmpty(destPortsExcludeString))
+      {
+        return true;
+      }
+
+      try
+      {
+        destPortsExclude.AddRange(ParsePortsString(destPortsExcludeString));
+      }
+      catch (ArgumentException)
+      {
+        return false;
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Returns allowed protocols list
+    /// </summary>
+    /// <returns>list of protocols</returns>
+    public ICollection<Protocol> GetProtocols()
+    {
+      return protocols.ToArray();
+    }
+
+
+    public bool SetProtocols(ICollection<int> protocolsCollection)
+    {
+      protocols.Clear();
+      if (null == protocolsCollection)
+      {
+        return true;
+      }
+      foreach (int protocol in protocolsCollection)
+      {
+        protocols.Add((Protocol)protocol);
+      }
+      return true;
+    }
+
+
+    /// <summary>
+    /// Checkes if filters allow the packet
+    /// </summary>
+    /// <param name="srcPortString">source port as string</param>
     /// <param name="srcIPString">source IP as string</param>
-    /// <returns>true if allowed</returns>
-    public bool IsSrcIPAllowed(string srcIPString)
-    {
-      if (0 == srcIPs.Count)
-      {
-        return true;
-      }
-
-      IPAddress srcIP;
-
-      if (!IPAddress.TryParse(srcIPString, out srcIP))
-      {
-        return false;
-      }
-      foreach (Range<IPAddress> srcIPRange in srcIPs)
-      {
-        if (IPAddressCompareTo(srcIP, srcIPRange.First) >= 0 &&
-          IPAddressCompareTo(srcIP, srcIPRange.Second) <= 0)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    
-    /// <summary>
-    /// Returns destination representation of source ports values
-    /// </summary>
-    /// <returns>destination ports as string</returns>
-    public string GetDestPortsString()
-    {
-      return RangeCollectionToString(destPorts);
-    }
-
-    
-    /// <summary>
-    /// Parses input string and updates destination port filters.
-    /// </summary>
-    /// <param name="destPortsString">destination ports as string</param>
-    /// <returns>true if destPortsString is valid, false otherwise</returns>
-    public bool SetDestPorts(string destPortsString)
-    {
-      destPorts.Clear();
-      if (string.IsNullOrEmpty(destPortsString))
-      {
-        return true;
-      }
-
-      try
-      {
-        destPorts.AddRange(ParsePortsString(destPortsString));
-      }
-      catch (ArgumentException)
-      {
-        return false;
-      }
-      return true;
-    }
-
-
-    /// <summary>
-    /// Checkes if destination port is allowed with filters
-    /// </summary>
     /// <param name="destPortString">destination port as string</param>
-    /// <returns>true if allowed</returns>
-    public bool IsDestPortAllowed(string destPortString)
-    {
-      if (0 == destPorts.Count)
-      {
-        return true;
-      }
-
-      int destPort;
-
-      if (!int.TryParse(destPortString, out destPort))
-      {
-        return false;
-      }
-      foreach (Range<int> destPortRange in destPorts)
-      {
-        if (destPort >= destPortRange.First && destPort <= destPortRange.Second)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    
-    /// <summary>
-    /// Returns string representation of destination IPs values
-    /// </summary>
-    /// <returns>IPs as string</returns>
-    public string GetDestIPsString()
-    {
-      return RangeCollectionToString(destIPs);
-    }
-
-
-    /// <summary>
-    /// Parses input string and updates destination IP filters.
-    /// </summary>
-    /// <param name="destIPsString">destination IPs as string</param>
-    /// <returns>true if destIPsString is valid, false otherwise</returns>
-    public bool SetDestIPs(string destIPsString)
-    {
-      destIPs.Clear();
-      if (string.IsNullOrEmpty(destIPsString))
-      {
-        return true;
-      }
-
-      try
-      {
-        destIPs.AddRange(ParseIPsString(destIPsString));
-      }
-      catch (ArgumentException)
-      {
-        return false;
-      }
-      return true;
-    }
-
-
-    /// <summary>
-    /// Checkes if destination IP is allowed with filters
-    /// </summary>
     /// <param name="destIPString">destination IP as string</param>
-    /// <returns>true if allowed</returns>
-    public bool IsDestIPAllowed(string destIPString)
+    /// <param name="protocol">protocol</param>
+    /// <returns>true if allow</returns>
+    public bool IsPacketAllowed(string srcIPString, string srcPortString,
+      string destIPString, string destPortString, Protocol protocol)
     {
-      if (0 == destIPs.Count)
+      // source IP
+      if (!string.IsNullOrEmpty(srcIPString))
       {
-        return true;
+        IPAddress srcIP;
+
+        if (!IPAddress.TryParse(srcIPString, out srcIP))
+        {
+          throw new ArgumentException("Source IP param in not valid");
+        }
+
+        if (srcIPsInclude.Count != 0)
+        {
+          bool isSrcIPAllowed = false;
+
+          foreach (Range<IPAddress> srcIPRange in srcIPsInclude)
+          {
+            if (IPAddressCompareTo(srcIP, srcIPRange.First) >= 0 &&
+              IPAddressCompareTo(srcIP, srcIPRange.Second) <= 0)
+            {
+              isSrcIPAllowed = true;
+              break;
+            }
+          }
+          if (!isSrcIPAllowed)
+          {
+            return false;
+          }
+        }
+        if (srcIPsExclude.Count != 0)
+        {
+          foreach (Range<IPAddress> srcIPRange in srcIPsExclude)
+          {
+            if (IPAddressCompareTo(srcIP, srcIPRange.First) >= 0 &&
+              IPAddressCompareTo(srcIP, srcIPRange.Second) <= 0)
+            {
+              return false;
+            }
+          }
+        }
       }
 
-      IPAddress destIP;
+      // source port
+      if (!string.IsNullOrEmpty(srcPortString))
+      {
+        int srcPort;
 
-      if (!IPAddress.TryParse(destIPString, out destIP))
+        if (!int.TryParse(srcPortString, out srcPort))
+        {
+          throw new ArgumentException("Source port param in not valid");
+        }
+
+        if (srcPortsInclude.Count != 0)
+        {
+          bool isSrcPortAllowed = false;
+
+          foreach (Range<int> srcPortRange in srcPortsInclude)
+          {
+            if (srcPort >= srcPortRange.First && srcPort <= srcPortRange.Second)
+            {
+              isSrcPortAllowed = true;
+              break;
+            }
+          }
+          if (!isSrcPortAllowed)
+          {
+            return false;
+          }
+        }
+        if (srcPortsExclude.Count != 0)
+        {
+          foreach (Range<int> srcPortRange in srcPortsExclude)
+          {
+            if (srcPort >= srcPortRange.First && srcPort <= srcPortRange.Second)
+            {
+              return false;
+            }
+          }
+        }
+      }
+
+      // destination IP
+      if (!string.IsNullOrEmpty(destIPString))
+      {
+        IPAddress destIP;
+
+        if (!IPAddress.TryParse(destIPString, out destIP))
+        {
+          throw new ArgumentException("Destination IP param in not valid");
+        }
+
+        if (destIPsInclude.Count != 0)
+        {
+          bool isDestIPAllowed = false;
+
+          foreach (Range<IPAddress> destIPRange in destIPsInclude)
+          {
+            if (IPAddressCompareTo(destIP, destIPRange.First) >= 0 &&
+              IPAddressCompareTo(destIP, destIPRange.Second) <= 0)
+            {
+              isDestIPAllowed = true;
+              break;
+            }
+          }
+          if (!isDestIPAllowed)
+          {
+            return false;
+          }
+        }
+        if (destIPsExclude.Count != 0)
+        {
+          foreach (Range<IPAddress> destIPRange in destIPsExclude)
+          {
+            if (IPAddressCompareTo(destIP, destIPRange.First) >= 0 &&
+              IPAddressCompareTo(destIP, destIPRange.Second) <= 0)
+            {
+              return false;
+            }
+          }
+        }
+      }
+
+      // destination port
+      if (!string.IsNullOrEmpty(destPortString))
+      {
+        int destPort;
+
+        if (!int.TryParse(destPortString, out destPort))
+        {
+          throw new ArgumentException("Destination port param in not valid");
+        }
+
+        if (destPortsInclude.Count != 0)
+        {
+          bool isDestPortAllowed = false;
+
+          foreach (Range<int> destPortRange in destPortsInclude)
+          {
+            if (destPort >= destPortRange.First && destPort <= destPortRange.Second)
+            {
+              isDestPortAllowed = true;
+              break;
+            }
+          }
+          if (!isDestPortAllowed)
+          {
+            return false;
+          }
+        }
+        if (destPortsExclude.Count != 0)
+        {
+          foreach (Range<int> destPortRange in destPortsExclude)
+          {
+            if (destPort >= destPortRange.First && destPort <= destPortRange.Second)
+            {
+              return false;
+            }
+          }
+        }
+      }
+
+      // protocol
+      if (!protocols.Contains(protocol))
       {
         return false;
       }
-      foreach (Range<IPAddress> destIPRange in destIPs)
-      {
-        if (IPAddressCompareTo(destIP, destIPRange.First) >= 0 &&
-          IPAddressCompareTo(destIP, destIPRange.Second) <= 0)
-        {
-          return true;
-        }
-      }
-      return false;
+
+      return true;
     }
     
     

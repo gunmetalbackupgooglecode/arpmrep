@@ -12,7 +12,7 @@ namespace PigSniffer.Packets
     IGMP = 2,
     TCP = 6,
     UDP = 17,
-    Reserved = -1
+//    Reserved = -1
   };
 
   // // http://www.networksorcery.com/enp/protocol/ip.htm
@@ -197,6 +197,12 @@ namespace PigSniffer.Packets
              ((destIPAddress >> 16) & 0xff) + "." +
              ((destIPAddress >> 8) & 0xff) + "." +
              (destIPAddress & 0xff);
+    }
+
+
+    public Protocol GetProtocol()
+    {
+      return (Protocol)protocol;
     }
 
 

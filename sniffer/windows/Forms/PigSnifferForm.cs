@@ -329,8 +329,14 @@ namespace PigSniffer.Forms
     private void ParseData(byte[] data, int count)
     {
       var ethernetPacket = new IPPacket(data, count);
+      string srcIPString = ethernetPacket.GetSrcIPAddressString();
+      string srcPortString = ethernetPacket.GetSrcPortString();
+      string destIPString = ethernetPacket.GetDestIPAddressString();
+      string destPortString = ethernetPacket.GetDestPortString();
+      Protocol protocol = ethernetPacket.GetProtocol();
+      string protocolString = ethernetPacket.GetProtocolString();
 
-      if (IsPacketAllowed(ethernetPacket))
+      if (filters.IsPacketAllowed(srcIPString, srcPortString, destIPString, destPortString, protocol))
       {
         lock (packets)
         {
@@ -340,9 +346,9 @@ namespace PigSniffer.Forms
           var item = new ListViewItem(new[]
                                       {
                                         packetNumber.ToString(),
-                                        ethernetPacket.GetSrcIPAddressString(), ethernetPacket.GetSrcPortString(),
-                                        ethernetPacket.GetDestIPAddressString(), ethernetPacket.GetDestPortString(),
-                                        ethernetPacket.GetProtocolString()
+                                        srcIPString, srcPortString,
+                                        destIPString, destPortString,
+                                        protocolString
                                       });
 
           updatesForPacketsListView.Add(item);
@@ -351,24 +357,14 @@ namespace PigSniffer.Forms
     }
 
 
-    /// <summary>
-    /// Checks if the packet satisfy filters' limits
-    /// </summary>
-    /// <param name="packet"></param>
-    /// <returns>true if satisfy</returns>
-    private bool IsPacketAllowed(IPPacket packet)
-    {
-      return filters.IsSrcPortAllowed(packet.GetSrcPortString()) &&
-             filters.IsSrcIPAllowed(packet.GetSrcIPAddressString()) &&
-             filters.IsDestPortAllowed(packet.GetDestPortString()) &&
-             filters.IsDestIPAllowed(packet.GetDestIPAddressString());
-    }
-
-
     private void UpdatePacketsListViewCallback(object stateInfo)
     {
       lock (packets)
       {
+        if (0 == updatesForPacketsListView.Count)
+        {
+          return;
+        }
         if (InvokeRequired)
         {
           var addDelegate = new AddPacketsListViewItemDelegate(AddPacketsListViewItemCallback);

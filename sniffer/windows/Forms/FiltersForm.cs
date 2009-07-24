@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using PigSniffer.Packets;
 
 
 namespace PigSniffer.Forms
@@ -13,10 +16,22 @@ namespace PigSniffer.Forms
     {
       InitializeComponent();
 
-      srcPortsTextBox.Text = initFilters.GetSrcPortsString();
-      srcIPsTextBox.Text = initFilters.GetSrcIPsString();
-      destPortsTextBox.Text = initFilters.GetDestPortsString();
-      destIPsTextBox.Text = initFilters.GetDestIPsString();
+      srcIPsIncludeTextBox.Text = initFilters.GetSrcIPsIncludeString();
+      srcIPsExcludeTextBox.Text = initFilters.GetSrcIPsExcludeString();
+      srcPortsIncludeTextBox.Text = initFilters.GetSrcPortsIncludeString();
+      srcPortsExcludeTextBox.Text = initFilters.GetSrcPortsExcludeString();
+      destIPsIncludeTextBox.Text = initFilters.GetDestIPsIncludeString();
+      destIPsExcludeTextBox.Text = initFilters.GetDestIPsExcludeString();
+      destPortsIncludeTextBox.Text = initFilters.GetDestPortsIncludeString();
+      destPortsExcludeTextBox.Text = initFilters.GetDestPortsExcludeString();
+      protocolsListBox.Items.AddRange(Enum.GetNames(typeof(Protocol)));
+
+      var protocolsValues = new ArrayList(Enum.GetValues(typeof(Protocol)));
+      
+      foreach (Protocol protocol in initFilters.GetProtocols())
+      {
+        protocolsListBox.SetSelected(protocolsValues.IndexOf(protocol), true);
+      }
     }
 
 
@@ -29,26 +44,62 @@ namespace PigSniffer.Forms
       bool isError = false;
       string errorMessage = "";
 
-      if (!filters.SetSrcPorts(srcPortsTextBox.Text))
+      if (!filters.SetSrcIPsInclude(srcIPsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source ports value is invalid";
+        errorMessage = "Source IPs include value is invalid";
       }
-      if (!filters.SetSrcIPs(srcIPsTextBox.Text))
+      else if (!filters.SetSrcIPsExclude(srcPortsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source IPs value is invalid";
+        errorMessage = "Source IPs exclude value is invalid";
       }
-      if (!filters.SetDestPorts(destPortsTextBox.Text))
+      else if (!filters.SetSrcPortsInclude(srcPortsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination ports value is invalid";
+        errorMessage = "Source ports include value is invalid";
       }
-      if (!filters.SetDestIPs(destIPsTextBox.Text))
+      else if (!filters.SetSrcPortsExclude(srcPortsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination IPs value is invalid";
+        errorMessage = "Source ports exclude value is invalid";
       }
+      else if (!filters.SetDestIPsInclude(destIPsIncludeTextBox.Text))
+      {
+        isError = true;
+        errorMessage = "Destination IPs include value is invalid";
+      }
+      else if (!filters.SetDestIPsExclude(destIPsExcludeTextBox.Text))
+      {
+        isError = true;
+        errorMessage = "Destination IPs exclude value is invalid";
+      }
+      else if (!filters.SetDestPortsInclude(destPortsIncludeTextBox.Text))
+      {
+        isError = true;
+        errorMessage = "Destination ports include value is invalid";
+      }
+      else if (!filters.SetDestPortsExclude(destPortsExcludeTextBox.Text))
+      {
+        isError = true;
+        errorMessage = "Destination ports exclude value is invalid";
+      }
+      else
+      {
+        var selectedProtocols = new List<int>();
+        Array protocolValues = Enum.GetValues(typeof(Protocol));
+
+        foreach (int index in protocolsListBox.SelectedIndices)
+        {
+          selectedProtocols.Add((int)protocolValues.GetValue(index));
+        }
+        if (!filters.SetProtocols(selectedProtocols))
+        {
+          isError = true;
+          errorMessage = "Destination IPs value is invalid";
+        }
+      }
+
 
       if (isError)
       {
