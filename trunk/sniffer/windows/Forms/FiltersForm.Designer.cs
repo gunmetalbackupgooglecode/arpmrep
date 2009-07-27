@@ -80,7 +80,7 @@
       srcPortsGroupBox.Location = new System.Drawing.Point(376, 12);
       srcPortsGroupBox.Name = "srcPortsGroupBox";
       srcPortsGroupBox.Size = new System.Drawing.Size(348, 81);
-      srcPortsGroupBox.TabIndex = 10;
+      srcPortsGroupBox.TabIndex = 1;
       srcPortsGroupBox.TabStop = false;
       srcPortsGroupBox.Text = "Source port";
       // 
@@ -89,7 +89,7 @@
       this.srcPortsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
       this.srcPortsExcludeTextBox.Name = "srcPortsExcludeTextBox";
       this.srcPortsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcPortsExcludeTextBox.TabIndex = 4;
+      this.srcPortsExcludeTextBox.TabIndex = 1;
       // 
       // srcPortsExcludeLabel
       // 
@@ -114,7 +114,7 @@
       this.srcPortsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
       this.srcPortsIncludeTextBox.Name = "srcPortsIncludeTextBox";
       this.srcPortsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcPortsIncludeTextBox.TabIndex = 1;
+      this.srcPortsIncludeTextBox.TabIndex = 0;
       // 
       // srcIPsGroupBox
       // 
@@ -125,7 +125,7 @@
       srcIPsGroupBox.Location = new System.Drawing.Point(13, 12);
       srcIPsGroupBox.Name = "srcIPsGroupBox";
       srcIPsGroupBox.Size = new System.Drawing.Size(348, 81);
-      srcIPsGroupBox.TabIndex = 11;
+      srcIPsGroupBox.TabIndex = 0;
       srcIPsGroupBox.TabStop = false;
       srcIPsGroupBox.Text = "Source IP";
       // 
@@ -134,7 +134,7 @@
       this.srcIPsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
       this.srcIPsExcludeTextBox.Name = "srcIPsExcludeTextBox";
       this.srcIPsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcIPsExcludeTextBox.TabIndex = 4;
+      this.srcIPsExcludeTextBox.TabIndex = 1;
       // 
       // srcIPsExcludeLabel
       // 
@@ -159,7 +159,7 @@
       this.srcIPsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
       this.srcIPsIncludeTextBox.Name = "srcIPsIncludeTextBox";
       this.srcIPsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.srcIPsIncludeTextBox.TabIndex = 3;
+      this.srcIPsIncludeTextBox.TabIndex = 0;
       // 
       // destPortsGroupBox
       // 
@@ -170,7 +170,7 @@
       destPortsGroupBox.Location = new System.Drawing.Point(376, 113);
       destPortsGroupBox.Name = "destPortsGroupBox";
       destPortsGroupBox.Size = new System.Drawing.Size(348, 81);
-      destPortsGroupBox.TabIndex = 12;
+      destPortsGroupBox.TabIndex = 3;
       destPortsGroupBox.TabStop = false;
       destPortsGroupBox.Text = "Destination port";
       // 
@@ -179,7 +179,7 @@
       this.destPortsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
       this.destPortsExcludeTextBox.Name = "destPortsExcludeTextBox";
       this.destPortsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destPortsExcludeTextBox.TabIndex = 4;
+      this.destPortsExcludeTextBox.TabIndex = 1;
       // 
       // destPortsExcludeLabel
       // 
@@ -204,7 +204,7 @@
       this.destPortsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
       this.destPortsIncludeTextBox.Name = "destPortsIncludeTextBox";
       this.destPortsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destPortsIncludeTextBox.TabIndex = 5;
+      this.destPortsIncludeTextBox.TabIndex = 0;
       // 
       // destIPsGroupBox
       // 
@@ -215,7 +215,7 @@
       destIPsGroupBox.Location = new System.Drawing.Point(13, 113);
       destIPsGroupBox.Name = "destIPsGroupBox";
       destIPsGroupBox.Size = new System.Drawing.Size(348, 81);
-      destIPsGroupBox.TabIndex = 13;
+      destIPsGroupBox.TabIndex = 2;
       destIPsGroupBox.TabStop = false;
       destIPsGroupBox.Text = "Destination IP";
       // 
@@ -224,7 +224,7 @@
       this.destIPsExcludeTextBox.Location = new System.Drawing.Point(67, 45);
       this.destIPsExcludeTextBox.Name = "destIPsExcludeTextBox";
       this.destIPsExcludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destIPsExcludeTextBox.TabIndex = 4;
+      this.destIPsExcludeTextBox.TabIndex = 1;
       // 
       // destIPsExcludeLabel
       // 
@@ -249,14 +249,14 @@
       this.destIPsIncludeTextBox.Location = new System.Drawing.Point(67, 19);
       this.destIPsIncludeTextBox.Name = "destIPsIncludeTextBox";
       this.destIPsIncludeTextBox.Size = new System.Drawing.Size(267, 20);
-      this.destIPsIncludeTextBox.TabIndex = 7;
+      this.destIPsIncludeTextBox.TabIndex = 0;
       // 
       // OKButton
       // 
       this.OKButton.Location = new System.Drawing.Point(273, 383);
       this.OKButton.Name = "OKButton";
       this.OKButton.Size = new System.Drawing.Size(75, 23);
-      this.OKButton.TabIndex = 8;
+      this.OKButton.TabIndex = 5;
       this.OKButton.Text = "OK";
       this.OKButton.UseVisualStyleBackColor = true;
       this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
@@ -267,7 +267,7 @@
       this.CancelButton.Location = new System.Drawing.Point(389, 383);
       this.CancelButton.Name = "CancelButton";
       this.CancelButton.Size = new System.Drawing.Size(75, 23);
-      this.CancelButton.TabIndex = 9;
+      this.CancelButton.TabIndex = 6;
       this.CancelButton.Text = "Cancel";
       this.CancelButton.UseVisualStyleBackColor = true;
       this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
@@ -279,7 +279,7 @@
       this.protocolsListBox.Name = "protocolsListBox";
       this.protocolsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
       this.protocolsListBox.Size = new System.Drawing.Size(263, 121);
-      this.protocolsListBox.TabIndex = 14;
+      this.protocolsListBox.TabIndex = 0;
       // 
       // protocolsGroupBox
       // 
@@ -287,7 +287,7 @@
       this.protocolsGroupBox.Location = new System.Drawing.Point(222, 213);
       this.protocolsGroupBox.Name = "protocolsGroupBox";
       this.protocolsGroupBox.Size = new System.Drawing.Size(292, 152);
-      this.protocolsGroupBox.TabIndex = 15;
+      this.protocolsGroupBox.TabIndex = 4;
       this.protocolsGroupBox.TabStop = false;
       this.protocolsGroupBox.Text = "Protocol";
       // 
