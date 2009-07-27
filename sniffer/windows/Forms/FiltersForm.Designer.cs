@@ -49,9 +49,11 @@
       this.destIPsExcludeTextBox = new System.Windows.Forms.TextBox();
       this.destIPsIncludeTextBox = new System.Windows.Forms.TextBox();
       this.OKButton = new System.Windows.Forms.Button();
-      this.CancelButton = new System.Windows.Forms.Button();
+      this.cancelButton = new System.Windows.Forms.Button();
       this.protocolsListBox = new System.Windows.Forms.ListBox();
       this.protocolsGroupBox = new System.Windows.Forms.GroupBox();
+      this.clearButton = new System.Windows.Forms.Button();
+      this.selectAllCheckBox = new System.Windows.Forms.CheckBox();
       srcPortsGroupBox = new System.Windows.Forms.GroupBox();
       srcPortsExcludeLabel = new System.Windows.Forms.Label();
       srcPortsIncludeLabel = new System.Windows.Forms.Label();
@@ -253,7 +255,7 @@
       // 
       // OKButton
       // 
-      this.OKButton.Location = new System.Drawing.Point(273, 383);
+      this.OKButton.Location = new System.Drawing.Point(223, 407);
       this.OKButton.Name = "OKButton";
       this.OKButton.Size = new System.Drawing.Size(75, 23);
       this.OKButton.TabIndex = 5;
@@ -261,16 +263,16 @@
       this.OKButton.UseVisualStyleBackColor = true;
       this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
       // 
-      // CancelButton
+      // cancelButton
       // 
-      this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.CancelButton.Location = new System.Drawing.Point(389, 383);
-      this.CancelButton.Name = "CancelButton";
-      this.CancelButton.Size = new System.Drawing.Size(75, 23);
-      this.CancelButton.TabIndex = 6;
-      this.CancelButton.Text = "Cancel";
-      this.CancelButton.UseVisualStyleBackColor = true;
-      this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.cancelButton.Location = new System.Drawing.Point(331, 407);
+      this.cancelButton.Name = "cancelButton";
+      this.cancelButton.Size = new System.Drawing.Size(75, 23);
+      this.cancelButton.TabIndex = 6;
+      this.cancelButton.Text = "Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
+      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // protocolsListBox
       // 
@@ -278,31 +280,55 @@
       this.protocolsListBox.Location = new System.Drawing.Point(15, 19);
       this.protocolsListBox.Name = "protocolsListBox";
       this.protocolsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-      this.protocolsListBox.Size = new System.Drawing.Size(263, 121);
+      this.protocolsListBox.Size = new System.Drawing.Size(263, 134);
       this.protocolsListBox.TabIndex = 0;
+      this.protocolsListBox.SelectedIndexChanged += new System.EventHandler(this.protocolsListBox_SelectedIndexChanged);
       // 
       // protocolsGroupBox
       // 
+      this.protocolsGroupBox.Controls.Add(this.selectAllCheckBox);
       this.protocolsGroupBox.Controls.Add(this.protocolsListBox);
       this.protocolsGroupBox.Location = new System.Drawing.Point(222, 213);
       this.protocolsGroupBox.Name = "protocolsGroupBox";
-      this.protocolsGroupBox.Size = new System.Drawing.Size(292, 152);
+      this.protocolsGroupBox.Size = new System.Drawing.Size(292, 183);
       this.protocolsGroupBox.TabIndex = 4;
       this.protocolsGroupBox.TabStop = false;
       this.protocolsGroupBox.Text = "Protocol";
+      // 
+      // clearButton
+      // 
+      this.clearButton.Location = new System.Drawing.Point(439, 407);
+      this.clearButton.Name = "clearButton";
+      this.clearButton.Size = new System.Drawing.Size(75, 23);
+      this.clearButton.TabIndex = 7;
+      this.clearButton.Text = "Clear";
+      this.clearButton.UseVisualStyleBackColor = true;
+      this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+      // 
+      // selectAllCheckBox
+      // 
+      this.selectAllCheckBox.AutoSize = true;
+      this.selectAllCheckBox.Location = new System.Drawing.Point(15, 159);
+      this.selectAllCheckBox.Name = "selectAllCheckBox";
+      this.selectAllCheckBox.Size = new System.Drawing.Size(70, 17);
+      this.selectAllCheckBox.TabIndex = 1;
+      this.selectAllCheckBox.Text = "Select All";
+      this.selectAllCheckBox.UseVisualStyleBackColor = true;
+      this.selectAllCheckBox.Click += new System.EventHandler(this.selectAllCheckBox_Click);
       // 
       // FiltersForm
       // 
       this.AcceptButton = this.OKButton;
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(736, 424);
+      this.ClientSize = new System.Drawing.Size(736, 443);
+      this.Controls.Add(this.clearButton);
       this.Controls.Add(this.protocolsGroupBox);
       this.Controls.Add(destIPsGroupBox);
       this.Controls.Add(destPortsGroupBox);
       this.Controls.Add(srcIPsGroupBox);
       this.Controls.Add(srcPortsGroupBox);
-      this.Controls.Add(this.CancelButton);
+      this.Controls.Add(this.cancelButton);
       this.Controls.Add(this.OKButton);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.MaximizeBox = false;
@@ -319,6 +345,7 @@
       destIPsGroupBox.ResumeLayout(false);
       destIPsGroupBox.PerformLayout();
       this.protocolsGroupBox.ResumeLayout(false);
+      this.protocolsGroupBox.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -330,12 +357,14 @@
     private System.Windows.Forms.TextBox destIPsIncludeTextBox;
     private System.Windows.Forms.TextBox destPortsIncludeTextBox;
     private System.Windows.Forms.Button OKButton;
-    private new System.Windows.Forms.Button CancelButton;
+    private new System.Windows.Forms.Button cancelButton;
     private System.Windows.Forms.TextBox srcPortsExcludeTextBox;
     private System.Windows.Forms.TextBox srcIPsExcludeTextBox;
     private System.Windows.Forms.TextBox destPortsExcludeTextBox;
     private System.Windows.Forms.TextBox destIPsExcludeTextBox;
     private System.Windows.Forms.ListBox protocolsListBox;
     private System.Windows.Forms.GroupBox protocolsGroupBox;
+    private System.Windows.Forms.Button clearButton;
+    private System.Windows.Forms.CheckBox selectAllCheckBox;
   }
 }
