@@ -65,69 +65,76 @@ namespace PigSniffer.Forms
     {
       filters = new Filters();
 
+      // clear errors
+      filtersErrorProvider.SetError(srcIPsIncludeTextBox, "");
+      filtersErrorProvider.SetError(srcIPsExcludeTextBox, "");
+      filtersErrorProvider.SetError(srcPortsIncludeTextBox, "");
+      filtersErrorProvider.SetError(srcPortsExcludeTextBox, "");
+      filtersErrorProvider.SetError(destIPsIncludeTextBox, "");
+      filtersErrorProvider.SetError(destIPsExcludeTextBox, "");
+      filtersErrorProvider.SetError(destPortsIncludeTextBox, "");
+      filtersErrorProvider.SetError(destPortsExcludeTextBox, "");
+      filtersErrorProvider.SetError(protocolsListBox, "");
+
       bool isError = false;
-      string errorMessage = "";
 
       if (!filters.SetSrcIPsInclude(srcIPsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source IPs include value is invalid";
+        filtersErrorProvider.SetError(srcIPsIncludeTextBox, "Source IPs include value is invalid");
       }
-      else if (!filters.SetSrcIPsExclude(srcIPsExcludeTextBox.Text))
+      if (!filters.SetSrcIPsExclude(srcIPsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source IPs exclude value is invalid";
+        filtersErrorProvider.SetError(srcIPsExcludeTextBox, "Source IPs exclude value is invalid");
       }
-      else if (!filters.SetSrcPortsInclude(srcPortsIncludeTextBox.Text))
+      if (!filters.SetSrcPortsInclude(srcPortsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source ports include value is invalid";
+        filtersErrorProvider.SetError(srcPortsIncludeTextBox, "Source ports include value is invalid");
       }
-      else if (!filters.SetSrcPortsExclude(srcPortsExcludeTextBox.Text))
+      if (!filters.SetSrcPortsExclude(srcPortsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Source ports exclude value is invalid";
+        filtersErrorProvider.SetError(srcPortsExcludeTextBox, "Source ports exclude value is invalid");
       }
-      else if (!filters.SetDestIPsInclude(destIPsIncludeTextBox.Text))
+      if (!filters.SetDestIPsInclude(destIPsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination IPs include value is invalid";
+        filtersErrorProvider.SetError(destIPsIncludeTextBox, "Destination IPs include value is invalid");
       }
-      else if (!filters.SetDestIPsExclude(destIPsExcludeTextBox.Text))
+      if (!filters.SetDestIPsExclude(destIPsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination IPs exclude value is invalid";
+        filtersErrorProvider.SetError(destIPsExcludeTextBox, "Destination IPs exclude value is invalid");
       }
-      else if (!filters.SetDestPortsInclude(destPortsIncludeTextBox.Text))
+      if (!filters.SetDestPortsInclude(destPortsIncludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination ports include value is invalid";
+        filtersErrorProvider.SetError(destPortsIncludeTextBox, "Destination ports include value is invalid");
       }
-      else if (!filters.SetDestPortsExclude(destPortsExcludeTextBox.Text))
+      if (!filters.SetDestPortsExclude(destPortsExcludeTextBox.Text))
       {
         isError = true;
-        errorMessage = "Destination ports exclude value is invalid";
-      }
-      else
-      {
-        var selectedProtocols = new List<int>();
-        Array protocolValues = Enum.GetValues(typeof(Protocol));
-
-        foreach (int index in protocolsListBox.SelectedIndices)
-        {
-          selectedProtocols.Add((int)protocolValues.GetValue(index));
-        }
-        if (!filters.SetProtocols(selectedProtocols))
-        {
-          isError = true;
-          errorMessage = "Destination IPs value is invalid";
-        }
+        filtersErrorProvider.SetError(destPortsExcludeTextBox, "Destination ports exclude value is invalid");
       }
 
+      var selectedProtocols = new List<int>();
+      Array protocolValues = Enum.GetValues(typeof(Protocol));
+
+      foreach (int index in protocolsListBox.SelectedIndices)
+      {
+        selectedProtocols.Add((int)protocolValues.GetValue(index));
+      }
+      if (!filters.SetProtocols(selectedProtocols))
+      {
+        isError = true;
+        filtersErrorProvider.SetError(protocolsListBox, "Protocols value is invalid");
+      }
 
       if (isError)
       {
-        MessageBox.Show(errorMessage, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Some data is incorrect. Fix errors please.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
