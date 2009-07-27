@@ -32,11 +32,35 @@ namespace PigSniffer.Forms
       {
         protocolsListBox.SetSelected(protocolsValues.IndexOf(protocol), true);
       }
+
+      selectAllCheckBox.Checked = (protocolsListBox.Items.Count == protocolsListBox.SelectedIndices.Count);
     }
 
 
     #region Controls events
 
+    private void protocolsListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      selectAllCheckBox.Checked = (protocolsListBox.Items.Count == protocolsListBox.SelectedIndices.Count);
+    }
+
+
+    private void selectAllCheckBox_Click(object sender, EventArgs e)
+    {
+      if (selectAllCheckBox.Checked)
+      {
+        for (int i = 0; i < protocolsListBox.Items.Count; ++i)
+        {
+          protocolsListBox.SetSelected(i, true);
+        }
+      }
+      else
+      {
+        protocolsListBox.ClearSelected();
+      }
+    }
+
+    
     private void OKButton_Click(object sender, EventArgs e)
     {
       filters = new Filters();
@@ -49,7 +73,7 @@ namespace PigSniffer.Forms
         isError = true;
         errorMessage = "Source IPs include value is invalid";
       }
-      else if (!filters.SetSrcIPsExclude(srcPortsExcludeTextBox.Text))
+      else if (!filters.SetSrcIPsExclude(srcIPsExcludeTextBox.Text))
       {
         isError = true;
         errorMessage = "Source IPs exclude value is invalid";
@@ -112,9 +136,27 @@ namespace PigSniffer.Forms
     }
 
 
-    private void CancelButton_Click(object sender, EventArgs e)
+    private void cancelButton_Click(object sender, EventArgs e)
     {
       Close();
+    }
+
+    
+    private void clearButton_Click(object sender, EventArgs e)
+    {
+      srcIPsIncludeTextBox.Text = "";
+      srcIPsExcludeTextBox.Text = "";
+      srcPortsIncludeTextBox.Text = "";
+      srcPortsExcludeTextBox.Text = "";
+      destIPsIncludeTextBox.Text = "";
+      destIPsExcludeTextBox.Text = "";
+      destPortsIncludeTextBox.Text = "";
+      destPortsExcludeTextBox.Text = "";
+      for (int i = 0; i < protocolsListBox.Items.Count; ++ i)
+      {
+        protocolsListBox.SetSelected(i, true);
+      }
+      selectAllCheckBox.Checked = true;
     }
 
     #endregion
