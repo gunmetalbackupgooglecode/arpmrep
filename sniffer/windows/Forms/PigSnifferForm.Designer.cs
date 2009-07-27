@@ -47,10 +47,10 @@
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.setToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       nicsLabel = new System.Windows.Forms.Label();
       bottomSplitContainer = new System.Windows.Forms.SplitContainer();
       topSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -93,7 +93,7 @@
       bottomSplitContainer.Panel2MinSize = 50;
       bottomSplitContainer.Size = new System.Drawing.Size(783, 541);
       bottomSplitContainer.SplitterDistance = 407;
-      bottomSplitContainer.TabIndex = 11;
+      bottomSplitContainer.TabIndex = 3;
       // 
       // topSplitContainer
       // 
@@ -113,7 +113,7 @@
       topSplitContainer.Panel2MinSize = 50;
       topSplitContainer.Size = new System.Drawing.Size(783, 407);
       topSplitContainer.SplitterDistance = 189;
-      topSplitContainer.TabIndex = 12;
+      topSplitContainer.TabIndex = 0;
       // 
       // packetsListView
       // 
@@ -133,7 +133,7 @@
       this.packetsListView.MultiSelect = false;
       this.packetsListView.Name = "packetsListView";
       this.packetsListView.Size = new System.Drawing.Size(783, 189);
-      this.packetsListView.TabIndex = 4;
+      this.packetsListView.TabIndex = 0;
       this.packetsListView.UseCompatibleStateImageBehavior = false;
       this.packetsListView.View = System.Windows.Forms.View.Details;
       this.packetsListView.SelectedIndexChanged += new System.EventHandler(this.packetsListView_SelectedIndexChanged);
@@ -174,7 +174,7 @@
       this.packetTreeView.Location = new System.Drawing.Point(0, 0);
       this.packetTreeView.Name = "packetTreeView";
       this.packetTreeView.Size = new System.Drawing.Size(783, 214);
-      this.packetTreeView.TabIndex = 5;
+      this.packetTreeView.TabIndex = 1;
       // 
       // packetRichTextBox
       // 
@@ -183,7 +183,7 @@
       this.packetRichTextBox.Name = "packetRichTextBox";
       this.packetRichTextBox.ReadOnly = true;
       this.packetRichTextBox.Size = new System.Drawing.Size(783, 130);
-      this.packetRichTextBox.TabIndex = 6;
+      this.packetRichTextBox.TabIndex = 1;
       this.packetRichTextBox.Text = "";
       // 
       // nicsComboBox
@@ -194,7 +194,7 @@
       this.nicsComboBox.Location = new System.Drawing.Point(178, 31);
       this.nicsComboBox.Name = "nicsComboBox";
       this.nicsComboBox.Size = new System.Drawing.Size(341, 21);
-      this.nicsComboBox.TabIndex = 9;
+      this.nicsComboBox.TabIndex = 0;
       // 
       // startButton
       // 
@@ -202,7 +202,7 @@
       this.startButton.Location = new System.Drawing.Point(559, 31);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(75, 23);
-      this.startButton.TabIndex = 2;
+      this.startButton.TabIndex = 1;
       this.startButton.Text = "Start";
       this.startButton.UseVisualStyleBackColor = true;
       this.startButton.Click += new System.EventHandler(this.startButton_Click);
@@ -213,7 +213,7 @@
       this.stopButton.Location = new System.Drawing.Point(655, 31);
       this.stopButton.Name = "stopButton";
       this.stopButton.Size = new System.Drawing.Size(75, 23);
-      this.stopButton.TabIndex = 3;
+      this.stopButton.TabIndex = 2;
       this.stopButton.Text = "Stop";
       this.stopButton.UseVisualStyleBackColor = true;
       this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
@@ -254,6 +254,13 @@
       this.filtersToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.filtersToolStripMenuItem.Text = "&Edit";
       // 
+      // clearToolStripMenuItem
+      // 
+      this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+      this.clearToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+      this.clearToolStripMenuItem.Text = "&Clear";
+      this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+      // 
       // setToolStripMenuItem
       // 
       this.setToolStripMenuItem.Name = "setToolStripMenuItem";
@@ -275,13 +282,6 @@
       this.aboutToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
       this.aboutToolStripMenuItem.Text = "&About PigSniffer";
       this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-      // 
-      // clearToolStripMenuItem
-      // 
-      this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-      this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-      this.clearToolStripMenuItem.Text = "&Clear";
-      this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
       // 
       // PigSnifferForm
       // 
