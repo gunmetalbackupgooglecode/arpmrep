@@ -29,9 +29,9 @@ private:
 
 public:
   static void Init(LPVOID mainFiberParam);
-  static void CreateFiber(LPFIBER_START_ROUTINE address, LPVOID param);
+  static void CreateFiber(LPFIBER_START_ROUTINE fiberStartAddress, LPVOID fiberParam);
 
 private:
   static DWORD WINAPI FiberSchedulerThreadProc(LPVOID);
-  static VOID CALLBACK FiberProcTemplate(PVOID param);
+  static VOID CALLBACK FiberProcTemplate(PVOID fiberParam);
 };

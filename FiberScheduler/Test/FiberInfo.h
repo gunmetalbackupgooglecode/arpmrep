@@ -17,5 +17,8 @@ private:
 
 public:
   FiberInfo(LPVOID fiberAddress, PRIORITY priority);
+  LPVOID GetFiberAddress() const;
+  void SetFiberAddress(LPVOID _fiberAddress);
   void Kill();
+  static bool DeadFiberPredicate(const FiberInfo* fiberInfo);
 };

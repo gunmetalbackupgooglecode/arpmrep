@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <tchar.h>
+
 #include <Windows.h>
 #include "FiberScheduler.h"
 #include "FiberSchedulerException.h"
@@ -18,6 +21,7 @@ void FiberScheduler::Init(LPVOID mainFiberParam)
 
   InitializeCriticalSection(&criticalSection);
 
+  // create first fiber (from main thread)
   LPVOID mainFiberAddress = ConvertThreadToFiber(mainFiberParam);
 
   if (NULL == mainFiberAddress)
@@ -34,9 +38,10 @@ void FiberScheduler::Init(LPVOID mainFiberParam)
   fiberInfoList.push_back(mainFiberInfo);
   LeaveCriticalSection(&criticalSection);
 
+  // create scheduler thread with above normal priority
   DWORD threadId;
 
-  fiberSchedulerThreadHandle = CreateThread(NULL, 0, FiberSchedulerThreadProc, NULL, 0, &threadId);
+  fiberSchedulerThreadHandle = CreateThread(NULL, 0, FiberSchedulerThreadProc, NULL, CREATE_SUSPENDED, &threadId);
   if (NULL == fiberSchedulerThreadHandle)
   {
     tstringstream messageStream;
@@ -44,20 +49,28 @@ void FiberScheduler::Init(LPVOID mainFiberParam)
     messageStream << TEXT("CreateThread() failed. Error = ") << GetLastError();
     throw FiberSchedulerException(messageStream.str());
   }
+  if (!SetThreadPriority(fiberSchedulerThreadHandle, THREAD_PRIORITY_ABOVE_NORMAL))
+  {
+    tstringstream messageStream;
+
+    messageStream << TEXT("SetThreadPriority() failed. Error = ") << GetLastError();
+    throw FiberSchedulerException(messageStream.str());
+  }
+  ResumeThread(fiberSchedulerThreadHandle);
 
   isInited = true;
 }
 
 
-void FiberScheduler::CreateFiber(LPFIBER_START_ROUTINE address, LPVOID fiberParam)
+void FiberScheduler::CreateFiber(LPFIBER_START_ROUTINE fiberStartAddress, LPVOID fiberParam)
 {
   if (!isInited)
   {
     throw FiberSchedulerException(TEXT("Not inited error. Call FiberScheduler::Init() first.\n"));
   }
 
-  FiberInfo* mainFiberInfo = new FiberInfo(address, FiberInfo::NORMAL);
-  FiberProcTemplateParam fiberTemplateParam(mainFiberInfo, address, fiberParam);
+  FiberInfo* fiberInfo = new FiberInfo(NULL, FiberInfo::NORMAL);
+  FiberProcTemplateParam fiberTemplateParam(fiberInfo, fiberStartAddress, fiberParam);
   LPVOID fiberAddress = ::CreateFiber(0, FiberProcTemplate, &fiberTemplateParam);
 
   if (NULL == fiberAddress)
@@ -67,18 +80,41 @@ void FiberScheduler::CreateFiber(LPFIBER_START_ROUTINE address, LPVOID fiberPara
     messageStream << TEXT("CreateFiber() failed. Error = ") << GetLastError();
     throw FiberSchedulerException(messageStream.str());
   }
+  fiberInfo->SetFiberAddress(fiberAddress);
 
   EnterCriticalSection(&criticalSection);
-  fiberInfoList.push_back(mainFiberInfo);
+  fiberInfoList.push_back(fiberInfo);
   LeaveCriticalSection(&criticalSection);
 }
 
 
 DWORD WINAPI FiberScheduler::FiberSchedulerThreadProc(LPVOID)
 {
+  int curFiber = 0;
+
   while (true)
   {
-    // TODO: implement
+    EnterCriticalSection(&criticalSection);
+
+    // delete dead fiber entries
+    fiberInfoList.remove_if(FiberInfo::DeadFiberPredicate);
+
+    // there are no alive fiber - it's time to kill myself
+    if (fiberInfoList.empty())
+    {
+      LeaveCriticalSection(&criticalSection);
+      return 0;
+    }
+
+    if (curFiber >= fiberInfoList.size())
+    {
+      curFiber = 0;
+    }
+
+    FiberInfo* selectedFiberInfo = fiberInfoList[curFiber];
+
+    LeaveCriticalSection(&criticalSection);
+
     Sleep(100);
   }
 
@@ -86,9 +122,9 @@ DWORD WINAPI FiberScheduler::FiberSchedulerThreadProc(LPVOID)
 }
 
 
-VOID CALLBACK FiberScheduler::FiberProcTemplate(PVOID param)
+VOID CALLBACK FiberScheduler::FiberProcTemplate(PVOID fiberParam)
 {
-  FiberProcTemplateParam* fiberTemplateParam = (FiberProcTemplateParam*)param;
+  FiberProcTemplateParam* fiberTemplateParam = (FiberProcTemplateParam*)fiberParam;
 
   __try
   {
@@ -97,5 +133,9 @@ VOID CALLBACK FiberScheduler::FiberProcTemplate(PVOID param)
   __finally
   {
     fiberTemplateParam->fiberInfo->Kill();
+    while (true)
+    {
+      Sleep(1000);
+    }
   }
 }
