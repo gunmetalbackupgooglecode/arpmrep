@@ -5,9 +5,15 @@
 #include "FiberSchedulerException.h"
 
 
-VOID CALLBACK FiberProc(PVOID param)
+VOID CALLBACK Fiber1Proc(PVOID param)
 {
-  _tprintf(TEXT("FiberProc\n"));
+  _tprintf(TEXT("Fiber1Proc\n"));
+}
+
+
+VOID CALLBACK Fiber2Proc(PVOID param)
+{
+  _tprintf(TEXT("Fiber2Proc\n"));
 }
 
 
@@ -16,7 +22,8 @@ int _tmain()
   try
   {
     FiberScheduler::Init(NULL);
-    FiberScheduler::CreateFiber(FiberProc, NULL);
+    FiberScheduler::CreateFiber(Fiber1Proc, NULL);
+    FiberScheduler::CreateFiber(Fiber2Proc, NULL);
   }
   catch (FiberSchedulerException& e)
   {
