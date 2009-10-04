@@ -33,6 +33,7 @@ int _tmain()
 
   while (true)
   {
+    _tprintf(TEXT("Main fiber\n"));
     Sleep(1000);
   }
 

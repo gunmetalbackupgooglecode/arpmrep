@@ -1,18 +1,31 @@
 #include "FiberInfo.h"
 
-FiberInfo::FiberInfo(LPVOID _fiberAddress, PRIORITY _priority)
-  : fiberAddress(_fiberAddress), priority(_priority), isDead(false) {}
+FiberInfo::FiberInfo(LPFIBER_START_ROUTINE _fiberStartAddress, PVOID _fiberParam, PRIORITY _priority)
+  : fiberContextAddress(NULL), fiberStartAddress(_fiberStartAddress),
+    fiberParam(_fiberParam), priority(_priority), isDead(false) {}
 
 
-LPVOID FiberInfo::GetFiberAddress() const
+LPVOID FiberInfo::GetFiberContextAddress() const
 {
-  return fiberAddress;
+  return fiberContextAddress;
 }
 
 
-void FiberInfo::SetFiberAddress(LPVOID _fiberAddress)
+void FiberInfo::SetFiberContextAddress(LPVOID _fiberContextAddress)
 {
-  fiberAddress = _fiberAddress;
+  fiberContextAddress = _fiberContextAddress;
+}
+
+
+LPFIBER_START_ROUTINE FiberInfo::GetFiberStartAddress() const
+{
+  return fiberStartAddress;
+}
+
+
+PVOID FiberInfo::GetFiberParam() const
+{
+  return fiberParam;
 }
 
 
@@ -24,9 +37,11 @@ void FiberInfo::Kill()
 
 bool FiberInfo::DeadFiberPredicate(const FiberInfo* fiberInfo)
 {
-  if (fiberInfo->isDead)
+  bool isDead = fiberInfo->isDead;
+
+  if (isDead)
   {
     delete fiberInfo;
   }
-  return fiberInfo->isDead;
+  return isDead;
 }
