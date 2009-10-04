@@ -1,29 +1,22 @@
 #pragma once
 
-#include <list>
+#include <vector>
 #include <Windows.h>
 #include "FiberInfo.h"
 
 
-// Singleton
+#define EASY_TO_FIND_ADDRESS 0x12345678
+
+
 class FiberScheduler
 {
 private:
-  struct FiberProcTemplateParam
-  {
-    FiberInfo* fiberInfo;
-    LPFIBER_START_ROUTINE address;
-    PVOID param;
-
-    FiberProcTemplateParam(FiberInfo* _fiberInfo, LPFIBER_START_ROUTINE _address, PVOID _param) :
-      fiberInfo(_fiberInfo), address(_address), param(_param) {}
-  };
-
-private:
+  static HANDLE mainThreadHandle;
   static HANDLE fiberSchedulerThreadHandle;
   static CRITICAL_SECTION criticalSection;
   static bool isInited;
-  static std::list<FiberInfo*> fiberInfoList;
+  static std::vector<FiberInfo*> fiberInfoList;
+  static LPVOID activeFiber;
 
   FiberScheduler();
 
@@ -34,4 +27,5 @@ public:
 private:
   static DWORD WINAPI FiberSchedulerThreadProc(LPVOID);
   static VOID CALLBACK FiberProcTemplate(PVOID fiberParam);
+  static void ReplaceAddress(PVOID buf, DWORD pattern, DWORD value);
 };

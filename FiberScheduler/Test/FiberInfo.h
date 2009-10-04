@@ -11,14 +11,18 @@ public:
   };
 
 private:
-  LPVOID fiberAddress;
+  LPVOID fiberContextAddress;
+  LPFIBER_START_ROUTINE fiberStartAddress;
+  PVOID fiberParam;
   PRIORITY priority;
   bool isDead;
 
 public:
-  FiberInfo(LPVOID fiberAddress, PRIORITY priority);
-  LPVOID GetFiberAddress() const;
-  void SetFiberAddress(LPVOID _fiberAddress);
+  FiberInfo(LPFIBER_START_ROUTINE fiberStartAddress, PVOID fiberParam, PRIORITY priority);
+  LPVOID GetFiberContextAddress() const;
+  void SetFiberContextAddress(LPVOID fiberContextAddress);
+  LPFIBER_START_ROUTINE GetFiberStartAddress() const;
+  PVOID GetFiberParam() const;
   void Kill();
   static bool DeadFiberPredicate(const FiberInfo* fiberInfo);
 };
