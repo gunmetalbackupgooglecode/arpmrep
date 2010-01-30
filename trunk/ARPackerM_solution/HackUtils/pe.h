@@ -12,21 +12,23 @@ public:
 	PE(DWORD fileMapAddress);
 	~PE();
 	
-	void Parse();
-  void SetDefaultValues();
+  BOOL AddImportDll(LPCTSTR dllName, LPCTSTR funcNames[], DWORD funcAmount);
+  const IMAGE_SECTION_HEADER* AddSection(LPCTSTR name, DWORD size);
   const IMAGE_FILE_HEADER* GetImageFileHeader() const;
   const IMAGE_OPTIONAL_HEADER* GetImageOptionalHeader() const;
-  const IMAGE_SECTION_HEADER* AddSection(LPCTSTR name, DWORD size);
   const IMAGE_SECTION_HEADER* GetSection(DWORD index) const;
-  BOOL AddImportDll(const CHAR* dllName, const CHAR** funcNames, DWORD funcAmount);
+  void Parse();
+  void ParseDotNetDirectoty() const;
+  void ParseExportDirectoty() const;
+  void SetDefaultValues();
 
 private:
-  BOOL IsParsed() const;
-  void Reset();
   DWORD AlignDown(DWORD addr, DWORD align) const;
   DWORD AlignUp(DWORD addr, DWORD align) const;
-	DWORD RvaToFileOffset(DWORD) const;
-	DWORD FileOffsetToRva(DWORD) const;
+  DWORD FileOffsetToRva(DWORD) const;
+  BOOL IsParsed() const;
+  void Reset();
+  DWORD RvaToFileOffset(DWORD) const;
 
 private:
   DWORD fileMapAddress;
